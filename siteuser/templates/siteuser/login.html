@@ -1,0 +1,16 @@
+{% extends "siteuser/base.html" %}
+
+{% block siteuserform %}
+    <form>{% csrf_token %}
+        <fieldset>
+            <label>电子邮件</label>
+            <input id="siteuserLoginEmail" type="text" placeholder="电子邮件">
+            <label>密码</label>
+            <input id="siteuserLoginPassword" type="password" placeholder="密码"><br />
+        <button id="siteuserLogin" class="btn" referer={{ referer }}>登录</button><a href="{% url siteuser_register %}" target="_blank" class="offset1">注册</a>
+        </fieldset>
+        <hr />
+    </form>
+    <div id="siteuserLoginWarning" class="alert alert-error" style="display: none;"></div>
+    <p class="pull-right"><a href="{% url siteuser_reset_step1 %}" >忘记密码？</a></p>
+{% endblock %}

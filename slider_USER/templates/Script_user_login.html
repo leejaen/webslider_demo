@@ -1,0 +1,43 @@
+﻿<style>
+    .loginBtn {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        top: 3px;
+        position: relative;
+        background-image: url(/static/images/website_login_icon.png);
+        background-repeat: no-repeat;
+        margin-left:20px;
+        margin-right:20px;
+    }
+
+    .login_weibo {
+        background-position-x: -22px;
+    }
+
+    .login_qq {
+        background-position-x: -42px;
+    }
+
+    .login_douban {
+        background-position-x: -2px;
+    }
+    
+    .login_renren {
+        background-position-x: -62px;
+    }
+    .login_self {
+        background-position-x: -82px;
+    }
+
+    .table td {border-top: 1px solid rgba(0,0,0,0);
+    }
+</style>
+<table style="margin-bottom:0px;" class="table table-condensed">
+    <tr><td><a href="{% url siteuser_login %}" target="_blank" style="font-weight:bold;"><span class="loginBtn login_self"></span>注册用户登录</a></td></tr>
+    {% if social_sites %}
+    {% for s in social_sites %}
+    <tr><td><a href="{{ s.authorize_url }}" style="margin-right: 4px;" target="_blank"><span class="loginBtn login_{{ s.site_name }}"></span>使用{{ s.site_name_zh }}账号登录</a></td></tr>
+    {% endfor %}
+    {% endif %}
+</table>

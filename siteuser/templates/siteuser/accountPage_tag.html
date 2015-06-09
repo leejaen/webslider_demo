@@ -1,0 +1,72 @@
+﻿{% extends "account_base.html" %}
+{% block title %}关注的所有标签
+{% endblock %}
+{% block pagecontainer %}
+{%if InterstingTags%}
+<style>
+    .bigTag { font-size: 20px; }
+    .hoverInfo { border-bottom:1px solid #00a !important;}
+</style>
+<script>
+    $(function () { 
+        $(".info").hover(function ()
+        {
+            $(this).addClass("hoverInfo");
+        }, function ()
+        {
+            $(this).removeClass("hoverInfo");
+        });
+    });
+</script>
+<div class="row-fluid">
+    {%include "Script_intersting_tag.html"%}
+<div class="span12">共关注{{extraInfo.slideCount}}个标签：</div>
+    {%for tag in InterstingTags%}
+    <div class="span3 info" style="border-bottom: 1px solid #aaa; margin: 5px; padding: 5px">
+        <div class="row-fluid">
+            <div class="span4">
+                <p>
+                    <img src="\static\media-files\{{tag.pic}}" style="width: 50px; height: 50px" class="thumbTitle" />
+                </p>
+                <p></p>
+            </div>
+            <div class="span8">
+                <p>
+                    <a href="{%url sliders_by_tag tag.tag_name%}" class="bigTag">#{{tag.tag_name}}</a>
+                </p>
+                <p>
+                    <a href="{%url sliders_by_tag tag.tag_name%}">{{tag.sliderCount}}</a>个幻灯片
+                </p>
+                <p>
+                    <span class="">{{tag.intertingCount}}人正在关注</span>
+                </p>
+                <p>
+                    <button class="btn btn-small btn-success btn_favoriteTag" tagname="{{tag.tag_name}}" type="button" style="{% ifequal tag.isInterting 1%}display: none{% endifequal %}">添加关注</button>
+                    <button class="btn btn-small btn-warning btn_unfavoriteTag" tagname="{{tag.tag_name}}" type="button" style="{% ifnotequal tag.isInterting 1%}display: none{% endifnotequal %}">取消关注</button>
+                </p>
+                <!--<p>
+                    <a href="{% url siteuser_account_url tag.creator.userURL %}">{{tag.creator.username}}</a>创建
+                </p>-->
+            </div>
+        </div>
+    </div>
+    {%endfor%}
+</div>
+
+{%if extraInfo.pageCount > 1 %}
+<div class="pagination pagination-large pagination-centered">
+    <ul>
+        <li><a href="{% url siteuser_account_tag siteuser.userURL%}">«</a></li>
+        {% for i in extraInfo.loop_times %}
+        <li class="{% ifequal extraInfo.page i %} active {% endifequal %} "><a href="{%url siteuser_account_tag_page userurlname=siteuser.userURL,page=i%}">{{i}}</a></li>
+        {{endif}}
+        {% endfor %}
+        <li><a href="{%url siteuser_account_tag_page userurlname=siteuser.userURL,page=extraInfo.pageCount%}">»</a></li>
+    </ul>
+</div>
+{% endif %}
+
+{%else%}
+{%if socialUser%}第三方网站用户尚无法关注标签，您可以<a href="#">立即推荐此用户注册或转为网站用户</a>{%else%}没有关注过任何标签{%endif%}
+{%endif%}
+{% endblock %}

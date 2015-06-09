@@ -1,0 +1,246 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta property="qc:admins" content="3277422001640620162307" />
+        <meta property="wb:webmaster" content="15922b54c5e2912c" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title></title>
+        <script src="{{STATIC_URL}}jquery-1.8.1.min.js"></script>
+        <!-- Bootstrap -->
+        <script src="{{STATIC_URL}}bootstrap/js/bootstrap.min.js"></script>
+        <link href="{{STATIC_URL}}bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="{{STATIC_URL}}bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" />
+        <!-- tagcloud -->
+        <script src="{{STATIC_URL}}plugins/TagCloud/jqTagCloud.js"></script>
+        <script>
+        $(function ()
+        {
+        $("#tagCloud").jqTagCloud();
+        })
+        </script>
+        <style>
+        body { /*text-shadow: 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff;*/ }
+        .lineEllipsis { display: inline; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+        .highlight { text-overflow: clip !important; overflow: visible; background-color: white; }
+        .dl-horizontal { border-left: 1px solid #eee; }
+        .dl-horizontal dt { width: 100px; line-height: 26px; color: #9da9b4; text-indent: 11px; font-weight: 100; text-align: left; margin-left: 0px !important; }
+        .dl-horizontal dt a:nth-of-type(even) { margin-right: 10px; color: #2d374b; }
+        .dl-horizontal dd { margin-left: 100px; line-height: 26px; color: #aaa; font-size: 12px; text-indent: 11px; margin-left: 0px !important; margin-bottom: 10px; }
+        .dl-horizontal dd a { margin-right: 10px; color: #aaa; }
+        .tag { margin-right: 10px; color: #aaa; font-size: 12px; text-indent: 11px; line-height: 26px; }
+        /*.dl-horizontal dd:nth-of-type(even) { margin-left: 100px; line-height: 20px; color: #888; font-size: 12px; text-indent: 10px; }
+        .dl-horizontal dd:nth-of-type(even) a { margin-right: 10px; color: #888; }*/
+        #tagCloud { padding-top: 5px; }
+        #tagCloud a { padding-left: 5px; }
+        .region_title { font-size: 20px; font-family: 黑体; padding: 10px 10px 5px 10px; color: #005580; text-shadow: 0px 2px 5px #aaa !important; letter-spacing: 3px; margin-bottom: -15px; border-top: 1px solid #eee; border-bottom: 1px solid #fff; /*border-left: 1px solid #0000ff;*/ background-origin: padding-box; background-repeat: no-repeat; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAADICAIAAAC7/QjhAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAADIGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IFdpbmRvd3MiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MEZBNDQwMzUxMDZFMTFFM0EyNzU4QjRFNEJEQUJBMzYiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MEZBNDQwMzYxMDZFMTFFM0EyNzU4QjRFNEJEQUJBMzYiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDowRkE0NDAzMzEwNkUxMUUzQTI3NThCNEU0QkRBQkEzNiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDowRkE0NDAzNDEwNkUxMUUzQTI3NThCNEU0QkRBQkEzNiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PhENNI0AAAMbSURBVHhe7dUxAQMxDARBcQqncDJaJcUXbww7o6tEYGfOvgcAKUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkzc7nGgCUCCEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApA2e+4BQIkQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaUIIQJoQApAmhACkCSEAaTPn+97zBoAGIQQgTQgBSBNCANKEEIA0IQQgTQgBSBNCANKEEIA0IQQgTQgBSBNCANKEEIA0IQQgTQgBSBNCANKEEIA0IQQgTQgBSBNCANKEEIA0IQQgTQgBSBNCANKEEIA0IQQgTQgBSBNCANKEEIA0IQQgTQgBSBNCANKEEIA0IQQgTQgBSBNCANKEEIA0IQQgTQgBSBNCANLmf9cAoEQIAUgTQgDShBCANCEEIE0IAUgTQgDShBCANCEEIE0IAUgTQgDShBCANCEEIE0IAUgTQgDShBCANCEEIE0IAUgTQgDShBCANCEEIE0IAUgTQgDShBCANCEEIE0IAUgTQgDShBCANCEEIE0IAUgTQgDShBCANCEEIE0IAUgTQgDShBCANCEEIE0IAUgTQgDShBCAsN0f5X0pbiePasMAAAAASUVORK5CYII=); }
+        .visor { display: inline-block; background-color: #0000ff; width: 20px; height: 50px; position: fixed; background-origin: padding-box; }
+        #articles [class*="span"]:nth-child(2n+1) { margin-left: 0; }
+        /*dt .visible-phone {  margin-right: 10px; margin-left: -10px; }*/
+        .lineEllipsis img { width: 16px; height: 16px; }
+        </style>
+    </head>
+    <body style="padding-right: 20px;padding-left: 20px;">
+        {%include 'Script_navbar_fixed_top.html'%} <!--border: 1px solid #f2f2f2; border-radius: 3px;-->
+        <div class="container" style="margin-top: 40px;">
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span2 hidden-phone">
+                        <!--标签榜 只有在电脑和平板上显示-->
+                        <div id="tagCloud" class="span12">
+                            {% if tagCloud%}
+                                {% for tag in tagCloud%}
+                                    <a count="{{tag.counter}}" href="{%url sliders_by_tag tag.tag_name%}" title="{{tag.counter}}">{{tag.tag_name}}<span style="font-size: 12px">({{tag.counter}})</span></a>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="span12 ad">广告</div>
+                        <div>
+                            <table class="table">
+                                {%if newUsers%}
+                                {% for newUser in newUsers%}
+                                    <tr>
+                                        <td>
+                                            <img src="{{newUser.avatar}}" style=" height: 40px; width: 40px; border-radius: 25px; display: block;" />
+                                        </td>
+                                        <td style="padding-top: 18px;">
+                                            <a href="{% url siteuser_account_url newUser.userURL %}">
+                                                {{newUser.username}}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {%endfor%}
+                                    <tr>
+                                        <td style="padding: 0px;"></td>
+                                        <td style="padding: 0px;"></td>
+                                    </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                    <div class="span10">
+                        <div class="row-fluid">
+                            <div class="span8">
+                                <!--'jquery skitter' or 'AviaSlider'-->
+                                <!--Body content-->
+                                <link href="{{STATIC_URL}}plugins/AviaSlider/style.css" rel="stylesheet" />
+                                <link href="{{STATIC_URL}}plugins/AviaSlider/prettyPhoto.css" rel="stylesheet" />
+                                <script src="{{STATIC_URL}}plugins/AviaSlider/jquery.aviaSlider.min.js"></script>
+                                <script src="{{STATIC_URL}}plugins/AviaSlider/custom.min.js"></script>
+                                <script src="{{STATIC_URL}}plugins/AviaSlider/jquery.prettyPhoto.js"></script>
+                                <div class="center">
+                                    {% if galleries %}
+                                        <ul class="aviaslider" id="randomized-blocks">
+                                            {% for gallery in galleries %}
+                                                <li>
+                                                    <a href="{% url slider_url userURL=gallery.slider.author.userURL,sliderURL=gallery.slider.fixedSliderURL %}" target="_blank">
+                                                        <img style="max-width: none;" src="{{STATIC_URL}}media-files/{{gallery.image}}" alt="{{gallery.gallery_word}}" />
+                                                    </a><a href="{% url siteuser_account_url gallery.slider.author.userURL %}" target="_blank" title="{{gallery.slider.author.username}}">
+                                                    <img src="{{gallery.slider.author.avatar}}" style="position: absolute;top: 10px;left: 10px;height: 40px;width: 40px;border-radius: 25px;z-index: 10;opacity: 1;visibility: visible;display: block;" />
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="span4 ">
+                            <!--short info-->
+                            <div id="shortinfo" class="row-fluid span12">
+                                {% if request.siteuser%}<!--已经登陆-->
+                                <div class="span6 hidden-phone" style="border-radius:100px;">
+                                    <a href="{% url account_settings %}" title="点击更新" style="text-decoration:none;">
+                                        <img src="{{userInfo.avatar}}" style="width: 144px; height: 144px; margin-right: 20px;" class="img-polaroid">
+                                    </a>
+                                    <div id="newinfo" style="position: relative;left: 126px;top: -148px;width: 30px;cursor: pointer;">
+                                        <span href="/newslider" target="_blank" title="1条新消息" style="border-radius: 30px;background-color: red;color: white;font-size: 14px;padding: 3px;">10</span>
+                                        <!--使用angular DI指令结合django推送实现-->
+                                    </div>
+                                </div>
+                                <div class="span6">
+                                    <table class="table table-hover">
+                                        <tr><td><a href="{% url siteuser_account_url request.siteuser.userURL %}">{{request.siteuser.username}}</a></td></tr>                                                       {%if not userInfo.social%}
+                                        <tr>
+                                            <td>
+                                                <span class="{% ifnotequal userInfo.social '0' %}disabled{% endifnotequal %}"><a href="{% ifnotequal userInfo.social '0' %}#{%else%}{% url UserFriends %}{% endifnotequal %}">粉丝：{{ userInfo.fansCount }}</a></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="{% ifnotequal userInfo.social '0' %}disabled{% endifnotequal %}"><a href="{% ifnotequal userInfo.social '0' %}#{%else%}{% url UserFriends %}{% endifnotequal %}">关注：{{ userInfo.focusCount }}</a></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="{% ifnotequal userInfo.social '0' %}disabled{% endifnotequal %}"><a href="{%url siteuser_private_message%}">消息</a></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding: 0px;"></td>
+                                        </tr>
+                                        <!--<tr>
+                                            <td>
+                                                <span><a href="{% url siteuser_logout %}">退出</a></span>
+                                            </td>
+                                        </tr>-->
+                                        {%endif%}
+                                    </table>
+                                </div>
+                                <div class="span12">
+                                    <button class="btn btn-large btn-block btn-primary" type="button" onclick="javascript:(function () { window.location.href = '/newslider'; })()"><a href="/newslider" target="_blank" style="color: white;">添加幻灯片</a></button>
+                                </div>
+                                {% else %}<!--没有登录-->
+                                <div class="span12">
+                                    {%include 'Script_user_login.html'%}
+                                </div>
+                                <div class="span12">
+                                    <button onclick="javascript: location.href='{% url siteuser_register %}'" class="btn btn-large btn-success btn-block btn-primary">注册</button>
+                                </div>
+                            {% endif %}
+                            <div class="span12">
+                                <a href="javascript:void(0)">广告</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="articles" class="row-fluid" style="margin-top:20px;">
+                    {% if headlines%}
+                        <div class="span8">
+                            <div class="region_title" style="background-position: 0px -40px;">实时热门</div>
+                            <dl class="dl-horizontal">
+                                {% for headline in headlines %}
+                                    <dt class="span12 lineEllipsis"><a href="{% url siteuser_account_url headline.author.userURL %}" target="_blank"><span class="visible-phone"><img src="{{headline.author.avatar}}" /></span><span class="hidden-phone">@{{headline.author.username}}</span></a>：<a href="{% url slider_url userURL=headline.author.userURL,sliderURL=headline.fixedSliderURL %}" title="{{headline.title}}    {{headline.creation_date}}" target="_blank">{{headline.title}}</a></dt>
+                                    {% if headline.tags %}
+                                        <dd class="span12 lineEllipsis" style="min-height: 20px; position: relative; top: -5px;">
+                                        {% for tag in headline.tags.all %}
+                                            <a href="{%url sliders_by_tag tag.tag_name%}" target="_blank" class="tag">#{{tag.tag_name}}</a>
+                                            {% empty %}
+                                            <!--No tags-->
+                                        {% endfor %}
+                                        </dd>
+                                    {% endif %}
+                                {% endfor %}
+                            </dl>
+                        </div>
+                    {% endif %}
+                    {% if recommends%}
+                        <div class="span4">
+                            <div class="region_title" style="background-position: 0px 0px;">兴趣推荐</div>
+                            <dl class="dl-horizontal">
+                                {% for recommend in recommends %}
+                                    <dt class="span12 lineEllipsis"><a href="{% url siteuser_account_url recommend.author.userURL %}" target="_blank"><span class="visible-phone"><img src="{{recommend.author.avatar}}" /></span></a><a href="{% url slider_url userURL=recommend.author.userURL,sliderURL=recommend.fixedSliderURL %}" title="{{recommend.title}}({{recommend.creation_date}})" target="_blank">{{recommend.title}}</a></dt>
+                                {% endfor %}
+                            </dl>
+                        </div>
+                    {% endif %}
+                    <div class="span10">Cloudinary can dynamically transform images using specially crafted transformation URLs. By default, the first time a user accesses a transformation URL, the transformed images is created on-the-fly, stored persistently in the cloud and delivered through a fast CDN with advanced caching. All subsequent accesses to the same transformation would quickly deliver a cached copy of the previously generated image via the CDN.</div>
+                    <div class="span2">谷歌绝大部分的收入来自搜索广告</div>
+                    {% if focus_sliders%}
+                        <div class="span6">
+                            <div class="region_title" style="background-position: 0px -80px;">关注的人</div>
+                            <dl class="dl-horizontal">
+                                {% for slider in focus_sliders %}
+                                    <dt class="span12 lineEllipsis"><a href="{% url siteuser_account_url slider.author.userURL %}" target="_blank"><span class="visible-phone"><img src="{{slider.author.avatar}}" /></span><span class="hidden-phone">@{{slider.author.username}}</span></a>：<a href="{%url slider_url userURL=slider.author.userURL,sliderURL=slider.fixedSliderURL%}" title="{{slider.title}}({{slider.creation_date}})" target="_blank">{{slider.title}}</a></dt>
+                                    {% if slider.tags %}
+                                        <dd class="span12 lineEllipsis" style="min-height: 20px; position: relative; top: -5px;">
+                                        {% for tag in slider.tags.all %}
+                                            <a href="{%url sliders_by_tag tag.tag_name%}" target="_blank" class="tag">#{{tag.tag_name}}</a>
+                                            {% empty %}
+                                            <!--No tags-->
+                                        {% endfor %}
+                                        </dd>
+                                    {% endif %}
+                                {% endfor %}
+                            </dl>
+                        </div>
+                    {% endif %}
+                    {% if mytags_sliders%}
+                        <div class="span6">
+                            <div class="region_title" style="background-position: 0px -120px;">关注的标签</div>
+                            <dl class="dl-horizontal">
+                                {% for slider in mytags_sliders %}
+                                    <dt class="span12 lineEllipsis"><a href="{% url siteuser_account_url slider.author.userURL %}" target="_blank"><span class="visible-phone"><img src="{{slider.author.avatar}}" /></span><span class="hidden-phone">@{{slider.author.username}}</span></a>：<a href="{%url slider_url userURL=slider.author.userURL,sliderURL=slider.fixedSliderURL%}" title="{{slider.title}}({{slider.creation_date}})" target="_blank">{{slider.title}}</a></dt>
+                                    {% if slider.tags %}
+                                        <dd class="span12 lineEllipsis" style="min-height: 20px; position: relative; top: -5px;">
+                                        {% for tag in slider.tags.all %}
+                                            <a href="{%url sliders_by_tag tag.tag_name%}" target="_blank" class="tag">#{{tag.tag_name}}</a>
+                                            {% empty %}
+                                            <!--No tags-->
+                                        {% endfor %}
+                                        </dd>
+                                    {% endif %}
+                                {% endfor %}
+                            </dl>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        <!--</div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">-->
+        </div>
+    </div>
+</div>
+</body>
+</html>

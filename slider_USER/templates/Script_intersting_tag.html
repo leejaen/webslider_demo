@@ -1,0 +1,81 @@
+﻿<!--处理标签的添加关注和取消关注的代码和样式start-->
+<script src="{{ STATIC_URL }}bootstrap/js/bootstrap-modal.js"></script>
+<style>
+        .btn_favoriteTag {background-image: url(/static/images/icon_add_remove.png); background-repeat: no-repeat; padding-left: 20px;background-position: 0 5px !important; }
+        .btn_unfavoriteTag { background-image: url(/static/images/icon_add_remove.png); background-repeat: no-repeat; padding-left: 20px;background-position: 0 -14px!important;}
+</style>
+<div class="modal hide fade" id="modalWindow" style="">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>提示</h3>
+    </div>
+    <div class="modal-body">
+        <div class="alert alert-success" style="display: none" id="successFavorite">
+            已经成功关注
+        </div>
+        <div class="alert alert-error" style="display: none" id="errorFavorite">
+            关注失败，请确定您的账户不是使用第三方网站登录，继续关注请<a href="{% url siteuser_register %}">注册账户</a>或<a href="{% url siteuser_as_register %}">转为本站用户</a>后登录。
+        </div>
+        <div class="alert" style="display: none" id="failedFavorite">
+            关注失败，请联系我们。
+        </div>
+        <div class="alert alert-success" style="display: none" id="successUnfavorite">
+            成功取消关注
+        </div>
+        <div class="alert alert-error" style="display: none" id="errorUnfavorite">
+            取消关注失败，请确定您的账户不是使用第三方网站登录，继续关注请<a href="{% url siteuser_register %}">注册账户</a>后登录。
+        </div>
+        <div class="alert" style="display: none" id="failedUnfavorite">
+            取消关注失败，请联系我们。
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+    </div>
+</div>
+<script src="/static/slider/public.js"></script>
+<script>
+    $(function ()
+    {
+        $(".btn_favoriteTag").click(function ()
+        {
+            var $that = $(this)
+            $.post('/favoriteTag/', {
+                date: new Date()
+                , 'csrfmiddlewaretoken': getCookie('csrftoken')
+                , tagname: $that.attr("tagname")
+            }, function (data)
+            {
+                $(".alert:not(#" + data + ")").hide();
+                $("#" + data).show();
+                if (data == "successFavorite")
+                {
+                    $that.hide();
+                    $that.next(".btn_unfavoriteTag").show();
+                }
+                $('#modalWindow').modal();
+            })
+        })
+        $(".btn_unfavoriteTag").click(function ()
+        {
+            var $that = $(this)
+            $.post('/unfavoriteTag/', {
+                date: new Date()
+                , 'csrfmiddlewaretoken': getCookie('csrftoken')
+                , tagname: $that.attr("tagname")
+            }, function (data)
+            {
+                $(".alert:not(#" + data + ")").hide();
+                $("#" + data).show();
+                if (data == "successUnfavorite")
+                {
+                    $that.hide();
+                    $that.prev(".btn_favoriteTag").show();
+                }
+                $('#modalWindow').modal();
+            })
+        })
+    });
+</script>
+<!--处理标签的添加关注和取消关注的代码和样式end-->

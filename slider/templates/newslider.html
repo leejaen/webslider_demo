@@ -1,0 +1,331 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!-- 启用响应式特性（Media queries） -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <script src="/static/jquery-2.0.0.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/bootstrap/js/holder.js"></script>
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" />
+    <script src="/static/bootstrap/js/bootstrap-popover.js"></script>
+    <!-- 编辑器 -->
+    <script src="/static/tinymce/tinymce.min.js"></script>
+    <script src="/static/tinymce/jquery.tinymce.min.js"></script>
+    <script src="/static/tinymce/textareas.js"></script>
+    <!-- 页面逻辑 -->
+    <link href="/static/css/animations.css" rel="stylesheet" />
+    <script src="/static/slider/newslider.js"></script>
+    <!-- range控件 -->
+    <link href="/static/range/css/slider.css" rel="stylesheet" />
+    <script src="/static/range/js/bootstrap-slider.js"></script>
+    <!-- icheck -->
+    <script src="/static/bootstrap/iCheck-master/jquery.icheck.min.js"></script>
+    <link href="/static/bootstrap/iCheck-master/skins/all.css" rel="stylesheet" />
+    <!--公共脚本-->
+    <script src="/static/slider/public.js"></script>
+    <!--meny-->
+    <!--<script src="/static/meny/meny.js"></script>-->
+    <style>
+        .header { height: 50px; overflow: hidden; position: absolute; top: 0; }
+        .middle { position: absolute!important; position: relative; top: 50px!important; bottom: 32px; overflow: hidden; height: auto!important; height: 100%; }
+        .footer { height: 32px; clear: both; position: absolute; bottom: 0; left: 0; }
+
+        .defaultStyle { text-align: center; width: 100%; font-size: 28px; color: #808080; }
+
+        /*底部导航栏*/
+        .navbar * { pointer-events: all !important; }
+        .footerbar { background-color: #eee; }
+        .thumbnails { text-align: center; white-space: nowrap; margin-left: 30px !important; background-color: #eee; overflow-x: scroll; margin-bottom: 0px !important; background: url(http://s1.qingting.fm/images/player_bg.png) repeat; margin-top: 0px; padding-top: 40px; overflow-y: hidden; }
+            .thumbnails > dt { display: inline-block !important; *display: inline !important; /* ie7 fix */ float: none; /* this is the part that makes it work */ box-shadow: 2px 2px 2px 0 rgba(0,0,0,0.2); border-radius: 3px; overflow: visible; margin-left: 0px !important; white-space: nowrap; margin-bottom: 8px; }
+            .thumbnails > dd { display: inline-block !important; float: none; background: url(/static/images/inserPos.png); position: relative; top: -21px; width: 30px; opacity: 0.01; margin-left: 0px !important; white-space: nowrap; height: 108px; margin-bottom: -21px; }
+        .thumbnail { padding: 0px 0px 4px 0px !important; background-color: #eee; }
+            .thumbnail:hover { border: 1px solid blue; }
+                .thumbnail:hover .insertL { display: block; }
+                .thumbnail:hover .insertR { display: block; }
+                .thumbnail:hover .insertL:hover { background: url(/static/images/insertL_focus.png); }
+                .thumbnail:hover .insertR:hover { background: url(/static/images/insertR_focus.png); }
+            .thumbnail > div:first-child { cursor: move; height: 20px; position: relative; background: rgba(88,88,88,0.3) url(/static/images/moveable.png) repeat; }
+                .thumbnail > div:first-child:hover { background: rgba(0,0,255,0.5) url(/static/images/moveable.png) repeat; }
+            .thumbnail > div:nth-child(3) { height: 80px; position: relative; }
+            .thumbnail > img { opacity: 0; }
+        #copycat { cursor: move; position: relative; display: none; top: 0px; left: 0px; width: 125px; height: 80px; background-repeat: no-repeat; background-color: #888; opacity: .5; z-index: 20; }
+        .description { background: no-repeat 50%; }
+
+        .insertL { display: none; width: 30px; height: 86px; position: relative; float: left; margin-left: -19px; margin-top: 0px; z-index: 10; background: url(/static/images/insertL.png); }
+        .insertR { display: none; width: 30px; height: 86px; position: relative; float: right; margin-right: -19px; margin-top: -80px; z-index: 10; background: url(/static/images/insertR.png); }
+        /*.insertL:hover { background: url(/static/images/insertL_focus.png); }
+        .insertR:hover { background: url(/static/images/insertR_focus.png); }*/
+
+        #sliderEditor { background: #f2f2f2; position: relative; height: 132px; margin-left: 30px; padding: 20px; z-index: 20; margin-top: 35px; padding-left: 0px; }
+        #titleMan { text-align: center; }
+        #titleController { margin-left: 55px; position: relative; top: 45px; }
+        .floatOut { top: 0px !important; }
+        #sliderEditorController { background: url(/static/images/downup.png); backface-visibility: visible; position: absolute; top: -10px; width: 50px; height: 50px; float: right; right: 5px; -webkit-filter: blur(1px); cursor: pointer; }
+            #sliderEditorController:hover { -webkit-filter: blur(0px); }
+        .enabledmulticheck { background: #eee; color: #999 !important; }
+        #mceNoEditor { width: 100%; margin-right: -20px; min-height:300px}
+        /*插件扩展*/
+        .tooltip { pointer-events: none; }
+        .alert { font-size: 14px; }
+        .unchecked { opacity: .5; }
+
+        .slider-selection { background: #8283FF; }
+        .slider-handle { border-bottom-color: #8283FF; }
+        .slider-track { background-image: url(/static/images/sliderBG.jpg); }
+    </style>
+</head>
+<body>
+    <!--<div class="meny"></div>-->
+    <div class="container">
+        <div id="insertCode" class="modal hide fade span12" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="left: 0px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <!--<h5>插入代码-->
+                <div id="insertCodeLabel">
+                    <div class="btn-group">
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">插入代码
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" style="height: 400px; overflow-x: hidden;" id="">
+                            <li><a class="languagesSelector" for="as3"><span style='font-weight: bold; padding-right: 20px'>ActionScript3</span>(as3, actionscript3)</a></li>
+                            <li><a class="languagesSelector" for="bash"><span style='font-weight: bold; padding-right: 20px'>Bash/shell</span>(bash, shell)</a></li>
+                            <li><a class="languagesSelector" for="cf"><span style='font-weight: bold; padding-right: 20px'>ColdFusion</span>(cf, coldfusion)</a></li>
+                            <li><a class="languagesSelector" for="csharp"><span style='font-weight: bold; padding-right: 20px'>C#</span>(c-sharp, csharp)</a></li>
+                            <li><a class="languagesSelector" for="cpp"><span style='font-weight: bold; padding-right: 20px'>C++</span>(cpp, c)</a></li>
+                            <li><a class="languagesSelector" for="css"><span style='font-weight: bold; padding-right: 20px'>CSS</span>(css)</a></li>
+                            <li><a class="languagesSelector" for="delphi"><span style='font-weight: bold; padding-right: 20px'>Delphi</span>(delphi, pas, pascal)</a></li>
+                            <li><a class="languagesSelector" for="diff"><span style='font-weight: bold; padding-right: 20px'>Diff</span>(diff, patch)</a></li>
+                            <li><a class="languagesSelector" for="erlang"><span style='font-weight: bold; padding-right: 20px'>Erlang</span>(erl, erlang)</a></li>
+                            <li><a class="languagesSelector" for="groovy"><span style='font-weight: bold; padding-right: 20px'>Groovy</span>(groovy)</a></li>
+                            <li><a class="languagesSelector" for="html"><span style='font-weight: bold; padding-right: 20px'>HTML</span>(html, xhtml)</a></li>
+                            <li><a class="languagesSelector" for="js"><span style='font-weight: bold; padding-right: 20px'>JavaScript</span>(js, jscript, javascript)</a></li>
+                            <li><a class="languagesSelector" for="java"><span style='font-weight: bold; padding-right: 20px'>Java</span>(java)</a></li>
+                            <li><a class="languagesSelector" for="jfx"><span style='font-weight: bold; padding-right: 20px'>JavaFX</span>(jfx, javafx)</a></li>
+                            <li><a class="languagesSelector" for="pl"><span style='font-weight: bold; padding-right: 20px'>Perl</span>(perl, pl)</a></li>
+                            <li><a class="languagesSelector" for="php"><span style='font-weight: bold; padding-right: 20px'>PHP</span>(php)</a></li>
+                            <li><a class="languagesSelector" for="plain"><span style='font-weight: bold; padding-right: 20px'>普通文本 Plain Text</span>(plain, text)</a></li>
+                            <li><a class="languagesSelector" for="ps"><span style='font-weight: bold; padding-right: 20px'>PowerShell</span>(ps, powershell)</a></li>
+                            <li><a class="languagesSelector" for="python"><span style='font-weight: bold; padding-right: 20px'>Python</span>(py, python)</a></li>
+                            <li><a class="languagesSelector" for="rails"><span style='font-weight: bold; padding-right: 20px'>Ruby</span>(rails, ror, ruby)</a></li>
+                            <li><a class="languagesSelector" for="scala"><span style='font-weight: bold; padding-right: 20px'>Scala</span>(scala)</a></li>
+                            <li><a class="languagesSelector" for="sql"><span style='font-weight: bold; padding-right: 20px'>SQL</span>(sql)</a></li>
+                            <li><a class="languagesSelector" for="vb"><span style='font-weight: bold; padding-right: 20px'>Visual Basic</span>(vb, vbnet)</a></li>
+                            <li><a class="languagesSelector" for="xml"><span style='font-weight: bold; padding-right: 20px'>XML</span>(xml, xslt )</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <span id="selectedLanguage">默认选择为普通文本样式</span>
+                <!--</h5>-->
+            </div>
+            <div class="modal-body">
+                <!--<div id="codeContent" contenteditable="true"></div>-->
+                <textarea id="mceNoEditor" class="mceNoEditor"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+                <button class="btn btn-primary" id="btnInsertCode">确定</button>
+            </div>
+        </div>
+        <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="myModalLabel">幻灯片信息</h3>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <input class="input-block-level" id="iptSliderTitle" type="text" maxlength="100" placeholder="幻灯片标题">
+                </p>
+                <p>
+                    <input class="input-block-level" id="sliderTags" type="text" placeholder="标签">{{myTags|safe }}
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+                <button class="btn btn-primary disabled" id="btnInputTitle">确定</button>
+            </div>
+        </div>
+        <textarea id="editorcontainer"></textarea>
+        <form class="navbar-form pull-left">
+            <div class="navbar navbar-fixed-bottom " onselectstart="return false" style="pointer-events: none;">
+                <div id="sliderEditorController" class="animatedDelay500ms" style="">
+                </div>
+                <div id="copycat"></div>
+                <div id="titleController">
+                    <div class="input-append">
+                        <input type="text" class="span11" id="titleMan" maxlength="50" onkeydown="if (event.keyCode == 13) {document.getElementById('updateTitle').click();return false;} ">
+                        <button id="updateTitle" type="button" class="btn">&nbsp;&nbsp;&nbsp;&nbsp;更&nbsp;&nbsp;新&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                    </div>
+                </div>
+                <div class="row footerbar" style="overflow: visible; height: 173px;">
+                    <dl class="thumbnails" id="thumbnails">
+                        <dd class="inserPos">&nbsp;</dd>
+                        <dt class="span2" id="id1">
+                            <div class="thumbnail">
+                                <div class="thumbtitlebar">title1</div>
+                                <div class="insertL"></div>
+                                <div class="description">description</div>
+                                <div class="insertR"></div>
+                                <img data-src="holder.js/125x1" alt="">
+                            </div>
+                        </dt>
+                        <dd class="inserPos">&nbsp;</dd>
+                    </dl>
+                    <div id="sliderEditor" class="animated">
+                        <!-- http://www.eyecon.ro/bootstrap-slider/  -->
+                        <div id="detailsMan" style="height: 100%; position: absolute; top: 0px; width: 100%;">
+                            <div class="row controls offset2">
+                                <div class="span2">
+                                    <div class="btn-group dropup">
+                                        <button class="btn">模板<span id="choisen"></span></button>
+                                        <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                                        <ul class="dropdown-menu" id="template_details">
+                                            <li class="dropdown-submenu">
+                                                <a tabindex="-1" href="#">旋转</a>
+                                                <ul class="dropdown-menu">
+                                                    <li><a tabindex="-1" href="#" id="rotate_up">螺旋上升</a></li>
+                                                    <li><a tabindex="-1" href="#" id="rotate_down">螺旋下降</a></li>
+                                                    <li><a tabindex="-1" href="#" id="rotate_right">向右滚动</a></li>
+                                                    <li><a tabindex="-1" href="#" id="rotate_left">向左滚动</a></li>
+                                                    <li><a tabindex="-1" href="#" id="rotate_closer">螺旋靠近</a></li>
+                                                    <li><a tabindex="-1" href="#" id="rotate_away">螺旋远离</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="dropdown-submenu">
+                                                <a tabindex="-1" href="#">飞入</a>
+                                                <ul class="dropdown-menu">
+                                                    <li><a tabindex="-1" href="#" id="movefrom_left">左侧滑入</a></li>
+                                                    <li><a tabindex="-1" href="#" id="movefrom_right">右侧滑入</a></li>
+                                                    <li><a tabindex="-1" href="#" id="movefrom_top">上部滑入</a></li>
+                                                    <li><a tabindex="-1" href="#" id="movefrom_bottom">下部滑入</a></li>
+                                                    <li><a tabindex="-1" href="#" id="movefrom_away">靠近</a></li>
+                                                    <li><a tabindex="-1" href="#" id="movefrom_near">远离</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="divider"></li>
+                                            <li class="dropdown-submenu">
+                                                <a tabindex="-1" href="#">其他</a>
+                                                <ul class="dropdown-menu">
+                                                    <li><a tabindex="-1" href="#">Second level link</a></li>
+                                                    <li><a tabindex="-1" href="#">Second level link</a></li>
+                                                    <li><a tabindex="-1" href="#">Second level link</a></li>
+                                                    <li><a tabindex="-1" href="#">Second level link</a></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="span3 ">
+                                    <div class="input-prepend input-append">
+                                        <span class="add-on span1">定义标记(#)</span>
+                                        <input class="span2" id="iptNavId" type="text" placeholder="" data-toggle="popover" data-original-title="唯一标记" data-placement="top" data-trigger="manual" data-content="请输入本文档中从未使用过的标记，否则，此标记值将会被还原。" onkeydown="if (event.keyCode == 13) {document.getElementById('btnNavId').click();return false;} ">
+                                        <button class="btn" id="btnNavId" type="button">确定</button>
+                                    </div>
+                                </div>
+                                <div class="span4">
+                                    <div class="input-prepend">
+                                        <div class="btn-group dropup span1">
+                                            <button class="btn dropdown-toggle dropup" data-toggle="dropdown">&nbsp;列表&nbsp;<span class="caret"></span></button>
+                                            <ul class="dropdown-menu">
+                                                <li><a id="chkA" class="multicheck checked enabledmulticheck" href="#" value="step">普通<span class="icon-ok pull-right"></span></a></li>
+                                                <li><a id="chkB" class="multicheck" href="#" value="slide">屏幕<span class="pull-right"></span></a></li>
+                                                <li><a id="chkC" class="multicheck" href="#" value="full">全屏<span class="pull-right"></span></a></li>
+                                                <li><a id="chkD" class="multicheck" href="#" value="custom">重点突出<span class="pull-right"></span></a></li>
+                                            </ul>
+                                        </div>
+                                        <!-- /btn-group -->
+                                        <input class="span3" id="selectedClasses" type="text" value="step">
+                                    </div>
+                                </div>
+                            </div>
+                            <table class="table table-hover">
+                                <tr>
+                                    <td><span id="label_rotate" class="label">平面旋转</span>
+                                    </td>
+                                    <td>
+                                        <input id="rotate" type="text" class="sliderbar span3" value="" data-slider-id="slider_rotate" data-slider-min="-360" data-slider-max="360" data-slider-step="10" data-slider-value="0" data-slider-orientation="horizontal" data-slider-selection="before" data-slider-tooltip="show"></td>
+                                    <td><span id="label_rotate_x" class="label">横向旋转</span></td>
+                                    <td>
+                                        <input id="rotate_x" type="text" class="sliderbar span3" value="" data-slider-id="slider_rotate_x" data-slider-min="-360" data-slider-max="360" data-slider-step="10" data-slider-value="0" data-slider-orientation="horizontal" data-slider-selection="before" data-slider-tooltip="show"></td>
+                                    <td><span id="label_rotate_y" class="label">纵向旋转</span></td>
+                                    <td>
+                                        <input id="rotate_y" type="text" class="sliderbar span3" value="" data-slider-id="slider_rotate_y" data-slider-min="-360" data-slider-max="360" data-slider-step="10" data-slider-value="0" data-slider-orientation="horizontal" data-slider-selection="before" data-slider-tooltip="show"></td>
+                                </tr>
+                                <tr>
+                                    <td><span id="label_translate_z" class="label">远近平移</span></td>
+                                    <td>
+                                        <input id="translate_z" type="text" class="sliderbar span3" value="" data-slider-id="slider_translate" data-slider-min="-2000" data-slider-max="2000" data-slider-step="10" data-slider-value="0" data-slider-orientation="horizontal" data-slider-selection="before" data-slider-tooltip="show"></td>
+                                    <td><span id="label_translate_x" class="label">左右平移</span></td>
+                                    <td>
+                                        <input id="translate_x" type="text" class="sliderbar span3" value="" data-slider-id="slider_translate_x" data-slider-min="-2000" data-slider-max="2000" data-slider-step="10" data-slider-value="0" data-slider-orientation="horizontal" data-slider-selection="before" data-slider-tooltip="show"></td>
+                                    <td><span id="label_translate_y" class="label">前后平移</span></td>
+                                    <td>
+                                        <input id="translate_y" type="text" class="sliderbar span3" value="" data-slider-id="slider_translate_y" data-slider-min="-2000" data-slider-max="2000" data-slider-step="10" data-slider-value="0" data-slider-orientation="horizontal" data-slider-selection="before" data-slider-tooltip="show"></td>
+                                </tr>
+                                <tr>
+                                    <td><span id="label_scale" class="label">缩放</span></td>
+                                    <td>
+                                        <!--最大-3到3 否则会引起幻灯片在页面的高度太大的问题-->
+                                        <input id="scale" type="text" class="sliderbar span3" value="" data-slider-id="slider_translate" data-slider-min="-3" data-slider-max="3" data-slider-step="1" data-slider-value="0" data-slider-orientation="horizontal" data-slider-selection="before" data-slider-tooltip="show"></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script>
+        //// Create an instance of Meny
+        //var meny = Meny.create({
+        //    // The element that will be animated in from off screen
+        //    menuElement: document.querySelector('.meny'),
+
+        //    // The container that gets pushed aside while Meny is active
+        //    contentsElement: document.querySelector('.container'),
+
+        //    // [optional] The alignment of the menu (top/right/bottom/left)
+        //    position: Meny.getQuery().p || 'left',
+
+        //    // [optional] The height of the menu (when using top/bottom position)
+        //    height: 200,
+
+        //    // [optional] The width of the menu (when using left/right position)
+        //    width: 260,
+
+        //    // [optional] Distance from mouse (in pixels) when menu should open
+        //    threshold: 40,
+
+        //    // [optional] Use mouse movement to automatically open/close
+        //    mouse: true,
+
+        //    // [optional] Use touch swipe events to open/close
+        //    touch: true
+        //});
+
+        //// API Methods:
+        //// meny.open();
+        //// meny.close();
+        //// meny.isOpen();
+
+        //// Events:
+        //// meny.addEventListener( 'open', function(){ console.log( 'open' ); } );
+        //// meny.addEventListener( 'close', function(){ console.log( 'close' ); } );
+
+        //// Embed an iframe if a URL is passed in
+        //if (Meny.getQuery().u && Meny.getQuery().u.match(/^http/gi))
+        //{
+        //    var container = document.querySelector('.container');
+        //    container.style.padding = '0px';
+        //    container.innerHTML = '<div class="cover"></div><iframe src="' + Meny.getQuery().u + '" style="width: 100%; height: 100%; border: 0; position: absolute;"></iframe>';
+        //}
+    </script>
+</body>
+</html>

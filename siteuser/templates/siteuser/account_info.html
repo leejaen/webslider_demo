@@ -1,0 +1,177 @@
+﻿<!doctype html>
+<html>
+<head>
+</head>
+<body>
+    <div class="siteuser">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <!--Sidebar content-->
+                    <div class="row-fluid">
+                        <div class="span4 text-right" style="padding-top: 100px;">
+                            <div class="row-fluid">
+                                <div class="span12">
+                                    <img src="{{siteuser.avatar}}" style="width: 140px; height: 140px;" /><br />
+                                </div>
+                                <div class="span12">
+                                    <div class="span2 pull-right">
+                                        粉丝吧<br />
+                                        <a href="#" id="A1">0</a>
+                                    </div>
+                                    <div class="span2 pull-right">
+                                        关注<br />
+                                        <a href="#" id="A2">0</a>
+                                    </div>
+                                    <div class="span2 pull-right">
+                                        标签<br />
+                                        <a href="#" id="A3">0</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="span5 nav nav-pills" style="padding-top: 140px;">
+                            <li class="active"><a href="#" title="{{siteuser.username}}的所有动态">{% if isMyAccount %}我的账户{%else%}{{siteuser.username}}{%endif%}</a></li>
+                            <li><a href="#">主题</a></li>
+                            <li><a href="#">回复</a></li>
+                            <li><a href="#">关注的人</a></li>
+                            <li><a href="#">关注的标签</a></li>
+                            <li><a href="#">粉丝</a></li>
+                            {%if not islogin%}<!--没有登录-->
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">登录 <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{% url siteuser_login %}" target="_blank">站内登录</a></li>
+                                    {% if social_sites %}
+                                    <li class="divider"></li>
+                                    {% if social_sites %}
+                                    {% for s in social_sites %}
+                                    <li><a href="{{ s.authorize_url }}" target="_blank">{{ s.site_name_zh }}登录</a></li>
+                                    {% endfor %}
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endif %}
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="span12">
+                    {% if not isMyAccount %}<!--其他用户的账户-->
+                    {% ifnotequal siteuser.is_social 1 %}<!--非社交网络用户-->
+                    <script src="/static/slider/public.js"></script>
+                    <script>
+                        $(function ()
+                        {
+                            function tipson(info)
+                            {
+                                var timeDelay = 3000;
+                                if (info == "notLogin" || info == "notinnerusercannotbefocused")
+                                {
+                                    timeDelay = 10000;
+                                }
+                                $(".alert:not(#" + info + ")").hide(function ()
+                                {
+                                    $("#" + info).slideDown(300, function ()
+                                    {
+                                        setTimeout(function ()
+                                        {
+                                            $("#" + info).slideUp(300);
+                                        }, timeDelay);
+                                    });
+                                })
+                                if (info == "focussuccess")
+                                {
+                                    $("#makemeasfriends").hide();
+                                    $("#makemeasnotfriends").show();
+                                } else if (info == "successunfocus")
+                                {
+                                    $("#makemeasfriends").show();
+                                    $("#makemeasnotfriends").hide();
+                                }
+                            }
+                            $("#makemeasfriends").click(function ()
+                            {
+                                $.post('/focusperson/', {
+                                    date: new Date()
+                                    , 'csrfmiddlewaretoken': getCookie('csrftoken')
+                                    , uid: $("#uid").val()
+                                }, function (data)
+                                {
+                                    tipson(data);
+                                })
+                            });
+                            $("#makemeasnotfriends").click(function ()
+                            {
+                                $.post('/unfocusperson/', {
+                                    date: new Date()
+                                    , 'csrfmiddlewaretoken': getCookie('csrftoken')
+                                    , uid: $("#uid").val()
+                                }, function (data)
+                                {
+                                    tipson(data);
+                                })
+                            });
+                        })
+                    </script>
+                    <a href="#" id="makemeasfriends" style="{% ifequal isfocused 'yes' %}display: none{%endifequal%}">关注TA</a>
+                    <a href="#" id="makemeasnotfriends" style="{% ifequal isfocused 'no' %}display: none{%endifequal%}">已关注，取消关注TA</a>
+                    <input id="uid" type="hidden" value="{{siteuser.id}}" />
+                    <div class="span12" style="display: block; position: absolute; margin-left: -50px !important;">
+                        <div class="alert alert-success" style="display: none" id="focussuccess">
+                            恭喜，您已经成功关注{{siteuser.username}}
+                        </div>
+                        <div class="alert alert-error" style="display: none" id="notinnerusercannotbefocused">
+                            关注失败，请确定您的账户不是使用第三方网站登录，继续关注请<a href="{% url siteuser_register %}">注册账户</a>或<a href="{% url siteuser_as_register %}">转为本站用户</a>后登录。
+                        </div>
+                        <div class="alert alert-info" style="display: none" id="focusfailed">
+                            关注失败，请联系我们。
+                        </div>
+                        <div class="alert" style="display: none" id="notfocusself">
+                            你好自恋哦亲，不允许关注自己的。
+                        </div>
+                        <div class="alert" style="display: none" id="focused">
+                            您已经关注了此用户。
+                        </div>
+                        <div class="alert alert-error" style="display: none" id="notinnerusercannotbeunfocused">
+                            纳尼？请确定您的账户不是使用第三方网站登录，你怎么关注了{{siteuser.username}}的？您可以<a href="{% url siteuser_register %}">注册账户</a>或<a href="{% url siteuser_as_register %}">转为本站用户</a>。
+                        </div>
+                        <div class="alert" style="display: none" id="nofocused">
+                            你又调皮！根本没有关注过此用户，下次要乖乖哦。
+                        </div>
+                        <div class="alert alert-success" style="display: none" id="successunfocus">
+                            已经成功取消关注{{siteuser.username}}。
+                        </div>
+                        <div class="alert alert-info" style="display: none" id="failedunfocus">
+                            取消关注失败，请联系我们。
+                        </div>
+                        <div class="alert alert-error" style="display: none" id="notLogin">
+                            已有账号请<a href="{% url siteuser_login %}">登录</a>，没有账号的话请<a href="{% url siteuser_register %}">注册账户</a>或<a href="{% url siteuser_as_register %}">转为本站用户</a>再关注。
+                        </div>
+                    </div>
+                    {%else%}
+            主页：
+            {% ifequal socialUser.site_name 'douban' %}
+            <a href="http://www.douban.com/people/{{socialUser.site_uid}}/" target="_blank">{{siteuser.username}}</a>
+                    {%else%}
+                {% ifequal socialUser.site_name 'weibo' %}
+                <a href="http://www.weibo.com/{{socialUser.site_uid}}/" target="_blank">{{siteuser.username}}</a>
+                    {%else%}
+                    {% ifequal socialUser.site_name 'renren' %}
+                    <a href="http://www.renren.com/{{socialUser.site_uid}}/" target="_blank">{{siteuser.username}}</a>
+                    {%else%}
+                        {% ifequal socialUser.site_name 'QQ' %}
+                        <a href="http://www.qq.com/{{socialUser.site_uid}}/" target="_blank">{{siteuser.username}}</a>
+                    {%endifequal%}
+                    {%endifequal%}
+                {%endifequal%}
+            {%endifequal%}
+                    <span style="font-size: 12px; color: #aaa">非站内用户，无法关注</span>
+                    {% endifnotequal %}
+            {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

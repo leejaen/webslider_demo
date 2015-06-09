@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>{{siteuser.username}}-{% block title %}{% endblock %}-飞溪鼠</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="{{ STATIC_URL }}jquery-1.8.1.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
+    <link href="{{ STATIC_URL }}bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="{{ STATIC_URL }}bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" />
+    <script src="{{ STATIC_URL }}jquery-2.0.0.min.js"></script>
+    <script src="{{ STATIC_URL }}siteuser/siteuser.js"></script>
+    <script src="{{ STATIC_URL }}slider/public.js"></script>
+    <style>
+        .scape {
+            font-size: 12px !important;
+        }
+
+        .tag {
+            margin-right: 10px;
+            color: #aaa;
+            font-size: 12px;
+            text-indent: 11px;
+            line-height: 26px;
+        }
+
+        td {
+            font-size: 14px;
+            padding-top: 20px !important;
+            min-width: 140px;
+        }
+
+        .thumbTitle {
+            height: 50px;
+            width: 50px;
+            border-radius: 3px;
+            -moz-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            -webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            filter: progid:DXImageTransform.Microsoft.Shadow(direction=135,strength=3, color=#808080);
+            border-collapse: separate;
+        }
+
+        .myphoto {
+            width: 140px;
+            height: 140px;
+            border: 1px solid #ddd;
+            padding: 3px;
+            box-shadow: 0 0 10px rgba(0,0,0,.5);
+        }
+
+        .pagination-large ul > li > a, .pagination-large ul > li > span {
+            padding: 11px 17px;
+            font-size: 17.5px;
+            border-radius: 100px !important;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="siteuser">
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span12" style="margin-top:100px">
+                        <!--Sidebar content-->
+                        <div class="row-fluid">
+                            <div class="span3 text-center">
+                                <div class="row-fluid">
+                                    <div class="span12 pull-right">
+                                        <a href="{% url account_settings %}" title="点击更新" style="text-decoration:none;">
+                                            <img src="{{siteuser.avatar}}" class="myphoto" style="width: 140px; height: 140px;" />
+                                        </a><br />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="span8">
+                                <div class="span12" style="margin-top: 30px; position: relative;" id="signature" aria="{{siteuser.id}}" {%if extrainfo.isself %} title="点此修改签名" {%endif%}>{%if siteuser.signature%}{{siteuser.signature}}{%else%}{%if extraInfo.isSelf %}点此修改签名{%else%}天气不错，讲点什么？{%endif%}{%endif%}</div>
+                                <ul class="span12 nav nav-pills" style="padding-top: 36px;">
+                                    <li class="{%ifequal extraInfo.navgationTag 'userInfo'%}active{%endifequal%}">
+                                        <a href="{%url siteuser_account_url siteuser.userURL%}" title="{{siteuser.username}}的所有动态">
+                                            <img src="/static/images/user.png" />{% if extraInfo.isSelf %}我{%else%}{{siteuser.username}}{%endif%}的动态
+                                        </a>
+                                    </li>
+                                    <li class="{%ifequal extraInfo.navgationTag 'userSlider'%}active{%endifequal%}"><a href="{%url siteuser_account_slider siteuser.userURL%}">主题</a></li>
+                                    {%ifnotequal siteuser.is_social 1%}<!--第三方用户无此功能-->
+                                    <li class="{%ifequal extraInfo.navgationTag 'myfans'%}active{%endifequal%}"><a href="{%url my_fans siteuser.userURL%}">粉丝({{extraInfo.userFansCount}})</a></li>
+                                    <li class="{%ifequal extraInfo.navgationTag 'myfocus'%}active{%endifequal%}"><a href="{%url my_focus siteuser.userURL%}">关注的人({{extraInfo.userFocusCount}})</a></li>
+                                    <li class="{%ifequal extraInfo.navgationTag 'intrestingTag'%}active{%endifequal%}"><a href="{%url siteuser_account_tag siteuser.userURL%}">关注的标签({{extraInfo.userTagsCount}})</a></li>{%endifnotequal%}
+                                    {%if not extraInfo.islogin%}<!--没有登录-->
+                                    <li class="dropdown">
+                                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">登录 <b class="caret"></b></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="{% url siteuser_login %}" target="_blank">站内登录</a></li>
+                                            {% if social_sites %}
+                                            <li class="divider"></li>
+                                            {% if social_sites %}
+                                            {% for s in social_sites %}
+                                            <li><a href="{{ s.authorize_url }}" target="_blank">{{ s.site_name_zh }}登录</a></li>
+                                            {% endfor %}
+                                            {% endif %}
+                                            {% endif %}
+                                        </ul>
+                                    </li>
+                                    {%else%}
+                                    {%if extraInfo.isSelf%}<!--属于自己的账户才显示的标签-->
+                                    <li class="{%ifequal extraInfo.navgationTag 'userMessage'%}active{%endifequal%}"><a href="{%url siteuser_private_message%}">消息</a></li>
+                                    <li class="{%ifequal extraInfo.navgationTag 'mylike'%}active{%endifequal%}"><a href="{%url likes_liders%}">我的喜欢</a></li>
+                                    <li class="{%ifequal extraInfo.navgationTag 'myfavo'%}active{%endifequal%}"><a href="{%url collect_liders%}">我的收藏</a></li>
+                                    <li class="{%ifequal extraInfo.navgationTag userInfo%}active{%endifequal%}"><a href="#">设置</a></li>
+                                    {%endif%}
+                                    {% endif %}
+                                </ul>
+                                {%if extraInfo.isSelf %}
+                                <!--account_base.html已经引用public.js-->
+                                <script>
+                                    $(function ()
+                                    {
+                                        var formlyText = "";
+                                        $("#signature").click(function ()
+                                        {
+                                            formlyText = $(this).text();
+                                            $(this).attr({ "contentEditable": "True" }).select();
+                                        }).blur(function ()
+                                        {
+                                            var text = $(this).text();
+                                            if (formlyText == text)
+                                            {
+                                                return false;
+                                            }
+                                            $(this).attr({ "contentEditable": "False" });
+                                            $.post("/changeSignature/", {
+                                                date: new Date()
+                                                , 'csrfmiddlewaretoken': getCookie('csrftoken')
+                                                , signatureText: $(this).text()
+                                                , aria: $(this).attr("aria")
+                                            }, function (data)
+                                            {
+                                                if (data == "overpower")
+                                                {
+                                                    alert("非法修改");
+                                                } else if (data == "faild")
+                                                {
+                                                    alert("修改不成功，请稍后重试，字数限制在100字以内。");
+                                                } else if (data == "success")
+                                                {
+                                                    alert("修改成功");
+                                                }
+                                            });
+                                        })
+                                    })
+                                </script>
+                                {%endif%}
+                            </div>
+                            <div class="span1"></div>
+                        </div>
+                    </div>
+                    <div class="span12">
+                        <div class="row-fluid">
+                            <div class="span1"></div>
+                            <div class="span10 scape">
+                                {% block pagecontainer %}{% endblock %}
+                            </div>
+                            <div class="span1"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

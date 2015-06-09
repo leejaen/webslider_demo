@@ -1,0 +1,60 @@
+﻿{% extends "account_base.html" %}
+{% block title %}所有主题
+{% endblock %}
+{% block pagecontainer %}
+{% if extraInfo.isSelf %}
+{%if sliders%}
+<style>
+    td { padding-top: 20px !important; }
+</style>
+{%include "Script_like_collect_slider.html"%}
+<div class="span12">共收藏过{{extraInfo.slideCount}}条：</div>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>目录</th>
+            <th>操作</th>
+            <th>时间</th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for slider in sliders%}
+        <tr>
+            <td>
+                <div style="float: left !important; white-space: nowrap" class="span12"><a href="{%url slider_url userURL=slider.author.userURL,sliderURL=slider.fixedSliderURL%}">{{slider.title}}</a></div>
+                <div style="float: left !important; white-space: nowrap; margin-left: 0px !important;" class="span12">
+                    {%for tag in slider.tags.all%}
+                <a href="{%url sliders_by_tag tag.tag_name%}" class="tag">#{{tag.tag_name}}</a>
+                    {%endfor%}
+                </div>
+            </td>
+            <td>
+                <span class="pull-center">
+                    <a href="javascript:void(0)" class="btn_collection collected" for="{{slider.slider_ID}}">收藏</a>
+                </span>
+            </td>
+            <td>
+                <span href="#" class="muted">{{slider.creation_date|date:'Y-m-d H:i'}}</span>
+            </td>
+        </tr>
+        {%endfor%}
+    </tbody>
+</table>
+
+{%if extraInfo.pageCount > 1 %}
+<div class="pagination pagination-large pagination-centered">
+    <ul>
+        <li><a href="{% url collect_liders %}">«</a></li>
+        {% for i in extraInfo.loop_times %}
+        <li class="{% ifequal extraInfo.page i %} active {% endifequal %} "><a href="{%url collect_liders_with_page i%}">{{i}}</a></li>
+        {{endif}}
+        {% endfor %}
+        <li><a href="{%url collect_liders_with_page extraInfo.pageCount%}">»</a></li>
+    </ul>
+</div>
+{% endif %}
+{%else%}
+还没有收藏过幻灯片
+{% endif %}
+{% endif %}
+{% endblock %}

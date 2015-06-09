@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>用户属性</title>
+    <script src="{{ STATIC_URL }}jquery-2.0.0.min.js"></script>
+    <script src="{{ STATIC_URL }}siteuser/siteuser.js"></script>
+    <link href="{{ STATIC_URL }}bootstrap/css/bootstrap.min.css" rel="stylesheet"><style>
+    input, fieldset {
+        margin-bottom: 30px !important;
+    }
+</style>
+</head>
+
+<body>
+    <div class="{% if social_sites %}row-fluid{% endif %}" style="{% if social_sites %}margin-top:200px;{% endif %}">
+        <div class="{% if social_sites %}span12{% endif %}">
+            {% if social_sites %}
+            <div class="span4"></div>
+            {% endif %}
+            <div class="{% if social_sites %}span4{% endif %} siteuserform">
+                <div style="width: 940px; margin: 30px auto;">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

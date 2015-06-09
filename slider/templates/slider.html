@@ -1,0 +1,229 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>{{slider.title}}-{{slider.author.username}}-飞溪鼠</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=800" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    {%if slider.description%}<meta name="description" content="{{slider.description}}">{%endif%}
+    {%if slider.tags.all%}<meta name="keywords" content="{%for tag in slider.tags.all%}{{tag.tag_name}},{%endfor%}飞溪鼠演示">{%endif%}
+    <link href="/static/base/css/impress-demo.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="/static/base/favicon.png" />
+    <link rel="apple-touch-icon" href="/static/base/apple-touch-icon.png" />
+    <link href="/static/base/css/scrollstyle.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="/static/syntaxhighlighter/scripts/shCore.js"></script>
+    <script src="/static/syntaxhighlighter/src/shAutoloader.js"></script>
+    <link type="text/css" rel="stylesheet" href="/static/syntaxhighlighter/styles/shCoreDefault.css" />
+
+    <style>
+        .defaultStyle { text-align: center; }
+        .impress-enabled .step { overflow-y: auto; max-height: 720px; }
+        .mainPage{margin-right: 36px;color: #FFF;font-size: 18px;text-indent: 11px;line-height: 26px;}
+        .tag { margin-right: 10px; color: #eee; font-size: 18px; text-indent: 11px; line-height: 26px; }
+        .thumbTitle { height: 50px; width: 50px; border-radius: 3px; -moz-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); -webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); filter: progid:DXImageTransform.Microsoft.Shadow(direction=135,strength=3, color=#808080); border-collapse: separate; }
+        .slide { position: relative; top: 0; }
+        .commentBubble { position: relative; float: right; cursor: pointer; color: red; background-image: url(/static/images/new_comment.png); margin-right: -52px; margin-top: -38px; background-size: contain; width: 40px; background-repeat: no-repeat; text-align: center; font-size: 24px; height: 40px; line-height: 30px; }
+        #comments { max-height: 460px; overflow: auto; }
+    </style>
+</head>
+<body class="impress-not-supported">
+    <div class="sliderTags" style="pointer-events: auto !important; text-shadow: 0 0 5px rgb(197,222,234), 0 0 5px rgb(197,222,234), 0 0 5px rgb(197,222,234); text-align: center; display: block;">
+        <a class="mainPage" href="{%url indexPage%}">首页</a>
+        {%if slider.tags.all%}{%for tag in slider.tags.all%}<a class="tag" href="{%url sliders_by_tag tag.tag_name%}" target="_blank">#{{tag.tag_name}}</a>{%endfor%}{%endif%}
+        {% if extraInfo.isSelf %}
+        <a href="{% url update_slider userURL=slider.author.userURL,sliderURL=slider.fixedSliderURL %}" title="编辑{{slider.title}}" target="_self">编辑</a>{%endif%}
+    </div>
+    <div class="fallback-message">
+        <p>您使用的浏览器版本太过老旧不支持本网页所需的特性。</p>
+        <p>
+            更好的上网体验请升级浏览器到最新的
+            <b><a href="https://www.google.com/intl/zh-CN/chrome/browser/?hl=zh-CN&brand=CHMI" target="_blank">Chrome</a></b>、
+            <b><a href="http://www.apple.com.cn/safari/" target="_blank">Safari</a></b>
+            或 <b><a href="http://firefox.com.cn/" target="_blank">Firefox</a></b> 浏览器。
+        </p>
+    </div>
+    <div id="impress">
+        {% if sliderData%}
+        <script>console.log("{{sliderData|safe}}");</script>
+        {% for sliderOne in sliderData%}
+        <div for="{{sliderOne.slider_content_ID}}"
+             id="{{sliderOne.slider_nav_id }}"
+             class="{{sliderOne.slider_class}} slide "
+             data-x="{{sliderOne.dataX}}"
+             data-y="{{sliderOne.dataY}}"
+             data-z="{{sliderOne.dataZ}}"
+             data-rotate-x="{{sliderOne.data_rotate_x}}"
+             data-rotate-y="{{sliderOne.data_rotate_y}}"
+             data-rotate="{{sliderOne.data_rotate}}"
+             data-scale="{{sliderOne.data_scale}}">
+            <div class="commentBubble" id="{{sliderOne.slider_content_ID}}">{{sliderOne.comments_count}}</div>
+            {{sliderOne.context|safe}}
+        </div>
+        {% endfor %}<!--data-scale="1"属性会影响页面滚动条-->
+        <div id="qrcodeview" style="" class="step" data-x="-1000" data-y="0" data-rotate="">
+            <div style="overflow: hidden; text-align: center; width: 800px; position: relative;">
+                <img src="{{slider.qrcode }}" />
+                <div style="width: 50px; height: 50px; position: absolute; top: 50%; left: 50%;">
+                    <img src="{{slider.author.avatar}}" style="width: 50px; height: 50px; position: relative; left: -25px; top: -30px; border: 2px solid #fff; border-radius: 100px;" />
+                </div>
+            </div>
+            <div style='text-align: center; width: 800px;'>
+                <br />
+                <p style="WORD-BREAK: break-all;">作者：@<a id="author">{{slider.author.username}}</a></p>
+                <br />
+                本页地址：<p style="WORD-BREAK: break-all;">{{qrcode.minor_url}}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <script src="{{ STATIC_URL }}jquery-1.8.1.min.js"></script>
+    <script src="/static/slider/public.js"></script>
+    <script>
+        $(function ()
+        {
+            $("#accordion-toggle").click(function ()
+            {
+                var $collapseOne = $("#collapseOne");
+                if ($collapseOne.is(":hidden"))
+                {
+                    $("#collapseOne").slideDown("50");
+                } else
+                {
+                    $("#collapseOne").slideUp("50");
+                }
+                $("#iWantToSay").focus();
+            });
+            $(".commentBubble").click(function ()
+            {
+                var pid = $(this).attr("id");
+                $("#btn_post_comment").attr({ "for": pid });
+                $.post('/ajax_getComments/', {
+                    date: new Date()
+                    , 'csrfmiddlewaretoken': getCookie('csrftoken')
+                    , pageid: pid
+                }, function (data)
+                {
+                    $("#accordion-toggle").click();
+                    data = JSON.parse(data);
+                    var commentHTML = "";
+                    for (var i = 0; i < data.length; i++)
+                    {
+                        commentHTML += '<div class="userSay"><a href="/user/' + data[i].username + '/" target="_blank"><!--<img class="thumbTitle" src="' + data[i].avatar_url + '" />--><span>' + data[i].username + '</span></a>:<span>' + data[i].comment_content + '</span><br /><span>' + data[i].comment_datetime + '</span></div>';
+                    }
+                    $("#comments").html(commentHTML);
+                })
+            });
+            $(".btn_post_comment").click(function ()
+            {
+                var post_comment = $("#iWantToSay").val();
+                var pid = $(this).attr("for");
+                if (post_comment == "学习了" || post_comment == "沙发" || post_comment == "顶" || post_comment == "sf")
+                {
+                    alert("请填写有价值内容！");
+                } else if (post_comment != undefined && post_comment != null && post_comment != "")
+                {
+                    $.post('/ajax_postComment/', {
+                        date: new Date()
+                        , 'csrfmiddlewaretoken': getCookie('csrftoken')
+                        , comment: post_comment
+                        , pageid: pid
+                        , userURL: $("#author").text()
+                    }, function (data)
+                    {
+                        if (data == "error")
+                        {
+                            alert("评论失败");
+                        } else if (data = "success")
+                        {
+                            alert("评论成功");
+                        }
+                    });
+                } else
+                {
+                    alert("请填写评论内容");
+                }
+            });
+        });
+    </script>
+    <style>
+        .accordion { float: right; width: 245px; margin-top: -25px; pointer-events: auto; -webkit-transform: translate3d(0px, 0px, 0px); z-index: 10; }
+        .accordion-group { border-radius: 10px; border: 1px solid #aaa; background-color: #fff; color: blue; }
+        .accordion-heading { margin: 10px; }
+        #collapseOne { border-top: 1px solid #aaa; display: none; max-height: 720px; line-height: 26px; overflow: auto; }
+        .accordion-inner { margin: 10px; }
+            .accordion-inner > div, .userSay { border-bottom: 1px solid #aaa; font-size: 10px; }
+        #iWantToSay { width: 97%; height: 50px; }
+    </style>
+    <div class="accordion">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" id="accordion-toggle" href="javascript:void(0);">
+                    评论
+                </a>
+            </div>
+            <div id="collapseOne" class="accordion-body collapse in">
+                <div class="accordion-inner">
+                    <div class="iSay">
+                        <img src="" /><input id="btn_post_comment" class="btn_post_comment" type="button" value="评论" />
+                        <textarea id="iWantToSay"></textarea>
+                    </div>
+                    <article id="comments"></article>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hint">
+        <p>使用空格或方向键控制幻灯片播放</p>
+    </div>
+    <script>
+        if ("ontouchstart" in document.documentElement)
+        {
+            document.querySelector(".hint").innerHTML = "<p>轻触左右边侧控制幻灯片播放</p>";
+        }
+    </script>
+    <script src="/static/base/js/impress.js"></script>
+    <script>impress().init();</script>
+</body>
+</html>
+<script type="text/javascript">
+    function path()
+    {
+        var args = arguments, result = [];
+
+        for (var i = 0; i < args.length; i++)
+            result.push(args[i].replace('@', '/static/syntaxhighlighter/scripts/'));
+
+        return result
+    };
+    SyntaxHighlighter.autoloader.apply(null, path(
+    'applescript            @shBrushAppleScript.js',
+    'actionscript3 as3      @shBrushAS3.js',
+    'bash shell             @shBrushBash.js',
+    'coldfusion cf          @shBrushColdFusion.js',
+    'cpp c                  @shBrushCpp.js',
+    'c# c-sharp csharp      @shBrushCSharp.js',
+    'css                    @shBrushCss.js',
+    'delphi pascal          @shBrushDelphi.js',
+    'diff patch pas         @shBrushDiff.js',
+    'erl erlang             @shBrushErlang.js',
+    'groovy                 @shBrushGroovy.js',
+    'java                   @shBrushJava.js',
+    'jfx javafx             @shBrushJavaFX.js',
+    'js jscript javascript  @shBrushJScript.js',
+    'perl pl                @shBrushPerl.js',
+    'php                    @shBrushPhp.js',
+    'text plain             @shBrushPlain.js',
+    'py python              @shBrushPython.js',
+    'powershell ps posh     @shBrushPowerShell.js',
+    'ruby rails ror rb      @shBrushRuby.js',
+    'sass scss              @shBrushSass.js',
+    'scala                  @shBrushScala.js',
+    'sql                    @shBrushSql.js',
+    'vb vbnet               @shBrushVb.js',
+    'xml xhtml xslt html    @shBrushXml.js'
+));
+    SyntaxHighlighter.all()
+</script>

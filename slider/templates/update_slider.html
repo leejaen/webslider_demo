@@ -1,0 +1,312 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=1024" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <title>{{slider.title}}-{{slider.author.username}}-飞溪鼠</title>
+        <link href="/static/base/css/impress-demo.css" rel="stylesheet" />
+        <link rel="shortcut icon" href="/static/base/favicon.png" />
+        <link rel="apple-touch-icon" href="/static/base/apple-touch-icon.png" />
+        <link href="/static/base/css/scrollstyle.css" rel="stylesheet" />
+        <script src="/static/angular-1.3.8/angular.min.js"></script>
+        <script src="/static/jquery-1.8.1.min.js"></script>
+        <script src="/static/angular-1.3.8/angular-sanitize.min.js"></script>
+        <style>
+        .defaultStyle { text-align: center; }
+        .impress-enabled .step { overflow-y: auto; max-height: 720px; }
+        .mainPage{margin-right: 36px;color: #FFF;font-size: 18px;text-indent: 11px;line-height: 26px;}
+        .tag { margin-right: 10px; color: #eee; font-size: 18px; text-indent: 11px; line-height: 26px; }
+        .thumbTitle { height: 50px; width: 50px; border-radius: 3px; -moz-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); -webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); filter: progid:DXImageTransform.Microsoft.Shadow(direction=135,strength=3, color=#808080); border-collapse: separate; }
+        .slide { position: relative; top: 0; }
+        </style>
+        {% if sliderData%}
+            <script>
+            //使用angular组合html
+            angular.module("updateSliderApp",['ngSanitize'])
+            .config(function($interpolateProvider) {
+                $interpolateProvider.startSymbol('{+');
+                $interpolateProvider.endSymbol('+}');
+            })
+            .filter('unsafe', function($sce) { 
+                return $sce.trustAsHtml; 
+            })
+            .filter('trusted', ['$sce', function($sce){
+                return function(text) {
+                    return $sce.trustAsHtml(text);
+                };
+            }])
+            .factory('sliderMan',function(){
+                var sliderJSON=eval({{sliderJSON|safe}});
+                return{
+                    getServerAll:function(){
+                        console.log(sliderJSON);
+                        return sliderJSON;
+                    },
+                    update:function(){},
+                    getPageIndex:function(){
+                        var elid=window.sessionStorage.getItem("elid");
+                        for (var i = sliderJSON.length - 1; i >= 0; i--) {
+                            if(sliderJSON[i].pk==elid){
+                                return i;
+                            }
+                        };
+                    }
+                }
+            })
+            .service('heroEditor',function  () {
+                return{
+                    fixSliderJson:function(sliderJson){
+                        var j=eval(JSON.stringify(sliderJson));//Parse the JSON to a string and then to a JSON again to avoid use it as a same object by reference.
+                        for (var i = 1; i < sliderJson.length; i++) {
+                            //从第2个开始运算，第一个(下标0)不用计算
+                            j[i].fields.dataX+=j[i-1].fields.dataX;
+                            j[i].fields.dataY+=j[i-1].fields.dataY;
+                            j[i].fields.dataZ+=j[i-1].fields.dataZ;
+                            j[i].fields.data_rotate_x+=j[i-1].fields.data_rotate_x;
+                            j[i].fields.data_rotate_y+=j[i-1].fields.data_rotate_y;
+                            j[i].fields.data_rotate+=j[i-1].fields.data_rotate;
+                        };
+                        return j;
+                    },
+                    revise:function(){
+                        var elid=window.sessionStorage.getItem("elid");
+                        var page=$("#"+elid);
+                        var dataX=page.attr("data-x");
+                        var dataY=page.attr("data-y");
+                        var dataZ=page.attr("data-z");
+
+                        var pageStyle=page.attr("style");
+                        var pageStyles=pageStyle.split("translate3d");
+                        pageStyles[1]="translate3d("+dataX+"px,"+dataY+"px,"+dataZ+"px"+pageStyles[1].substr(pageStyles[1].indexOf(")"));
+                        page.attr("style",pageStyles[0]+pageStyles[1]);
+
+                        var canvasStyle=$("#impressCanvas").attr("style");
+                        var canvasStyles=canvasStyle.split("translate3d");
+                        canvasStyles[1]="translate3d(-"+dataX+"px, -"+dataY+"px, -"+dataZ+"px"+canvasStyles[1].substr(canvasStyles[1].indexOf(")"));
+                        $("#impressCanvas").attr("style",canvasStyles[0]+canvasStyles[1]);
+                    },
+                    reviseRotate:function(){
+                        var elid=window.sessionStorage.getItem("elid");
+                        var page=$("#"+elid);
+                        var dataX=page.attr("data-rotate-x");
+                        var dataY=page.attr("data-rotate-y");
+                        var dataZ=page.attr("data-rotate");
+
+                        var pageStyle=page.attr("style");
+                        var pageStyles=pageStyle.split("rotateX");
+                        pageStyles[1]="rotateX("+dataX+"deg) rotateY("+dataY+"deg) rotateZ("+dataZ+"deg) "+pageStyles[1].substr(pageStyles[1].indexOf("scale"));
+                        page.attr("style",pageStyles[0]+pageStyles[1]);
+
+                        var canvasStyle=$("#impressCanvas").attr("style");
+                        var canvasStyles=canvasStyle.split("transform:");
+                        canvasStyles[1]="transform: rotateZ(-"+dataZ+"deg) rotateY(-"+dataY+"deg) rotateX(-"+dataX+"deg) "+canvasStyles[1].substr(canvasStyles[1].indexOf("translate3d"));
+                        $("#impressCanvas").attr("style",canvasStyles[0]+canvasStyles[1]);
+                    }
+                }
+            })
+            .controller("updateSliderController",["$scope",'$sce','sliderMan','heroEditor',function($scope,$sce,sliderMan,heroEditor){
+                $scope.sliderDataOrigin=sliderMan.getServerAll();//本地计算旋转移动等参数时使用
+                $scope.sliderData=heroEditor.fixSliderJson($scope.sliderDataOrigin);//计算后同步动态绑定时使用
+                //$scope.currPageData=$scope.sliderDataOrigin[sliderMan.getPageIndex()].fields;
+                $scope.$watch(function () {
+                   return window.sessionStorage.getItem("elid");
+                }, function (newVal, oldVal) {
+                   console.log("newVal="+newVal+", oldVal="+oldVal);
+                },true);
+                $scope.$watch('sliderData',function(newp){
+                    //Deep watch JSON object
+                    var i = sliderMan.getPageIndex();
+                    var value="posX: "+$scope.sliderData[i].fields.dataX
+                    +"; posY: "+$scope.sliderData[i].fields.dataY
+                    +"; posZ: "+$scope.sliderData[i].fields.dataZ
+                    +"; rotateX: "+$scope.sliderData[i].fields.data_rotate_x
+                    +"; rotateY: "+$scope.sliderData[i].fields.data_rotate_y
+                    +"; rotateZ: "+$scope.sliderData[i].fields.data_rotate;
+                    $("#superHero").val(value);
+                },true);
+                $scope.updateData=function(){
+                    
+                };
+                $scope.clickPage=function(index){
+
+                };
+                $scope.syncDataWithFixed=function(fixedData){
+                    for (var i = $scope.sliderData.length - 1; i >= 0; i--) {
+                        $scope.sliderData[i].fields.dataX=fixedData[i].fields.dataX;
+                        $scope.sliderData[i].fields.dataY=fixedData[i].fields.dataY;
+                        $scope.sliderData[i].fields.dataZ=fixedData[i].fields.dataZ;
+                        $scope.sliderData[i].fields.data_rotate_x=fixedData[i].fields.data_rotate_x;
+                        $scope.sliderData[i].fields.data_rotate_y=fixedData[i].fields.data_rotate_y;
+                        $scope.sliderData[i].fields.data_rotate=fixedData[i].fields.data_rotate;
+                    };
+                },
+                $scope.applying=function (heroEvent) {
+                    if (heroEvent.keyCode==13) {
+                        var params=$("#superHero").val().split(";");//posX: 1010; posY: 0; posZ: 0; rotateX: 120 ; rotateY: 0; rotateZ: 0
+                        var i=sliderMan.getPageIndex();
+                        var fields=$scope.sliderData[i].fields;
+                        for (var i = params.length - 1; i >= 0; i--) {
+                            var attr=params[i].split(":");
+                            var key=attr[0],value=attr[1];
+                            switch (key){
+                                case "posX":
+                                    fields.dataX=value;
+                                    break;
+                                case "posY":
+                                    fields.dataY=value;
+                                    break;
+                                case "posZ":
+                                    fields.dataZ=value;
+                                    break;
+                                case "rotateX":
+                                    fields.data_rotate_x=value;
+                                    break;
+                                case "rotateY":
+                                    fields.data_rotate_y=value;
+                                    break;
+                                case "rotateZ":
+                                    fields.data_rotate=value;
+                                    break;
+                            }
+                        };
+                        setTimeout(function(){
+                            heroEditor.revise();
+                            heroEditor.reviseRotate();
+                        },100);
+                    };
+                }
+                $scope.moveEye=function(axis,flag){
+                    if (axis=="x") {
+                        var left=$("#impress").offset().left;
+                        if (flag=="add") { $("#impress").offset({left:parseInt(left)+10}); }
+                        else if(left-10>=0) { $("#impress").offset({left:left-10}); }
+                    }
+                    else if (axis=="y") {
+                        var top=$("#impress").offset().top;
+                        if (flag=="add") { $("#impress").offset({top:parseInt(top)+10}); }
+                        else if(top-10>=0) {$("#impress").offset({top:top-10});}
+                    };
+                };
+                $scope.rotate=function(axis,flag){
+                    var i = sliderMan.getPageIndex();
+                    var fields=$scope.sliderDataOrigin[i].fields;
+                    if (axis=="x") {
+                        if (flag=="add") { fields.data_rotate_x=parseInt(fields.data_rotate_x)+1;
+                            if(fields.data_rotate_x>=360){fields.data_rotate_x=0;} }
+                        else if(fields.data_rotate_x-1>=0) { fields.data_rotate_x-=1; }
+                        else{fields.data_rotate_x=359;}
+                    }
+                    else if (axis=="y") {
+                        if (flag=="add") { fields.data_rotate_y=parseInt(fields.data_rotate_y)+1;
+                            if(fields.data_rotate_y>=360){fields.data_rotate_y=0;} }
+                        else if(fields.data_rotate_y-1>=0) { fields.data_rotate_y-=1; }
+                        else{fields.data_rotate_y=359;}
+                    }
+                    else if (axis=="z") {
+                        if (flag=="add") { fields.data_rotate=parseInt(fields.data_rotate)+1;
+                            if(fields.data_rotate>=360){fields.data_rotate=0;} }
+                        else if(fields.data_rotate-1>=0) { fields.data_rotate-=1; }
+                        else{fields.data_rotate=359;}
+                    }
+                    $scope.syncDataWithFixed(heroEditor.fixSliderJson($scope.sliderDataOrigin));//同步
+                    setTimeout(function(){
+                        heroEditor.reviseRotate();
+                    },100);
+                };
+                $scope.caculTranslate3d=function (axis,flag) {
+                    var i=sliderMan.getPageIndex();
+                    //for (var i = j; i < $scope.sliderDataOrigin.length; i++) {
+                        var fields=$scope.sliderDataOrigin[i].fields;
+                        if (axis=="x") {
+                            if (flag=="add") { fields.dataX=parseInt(fields.dataX)+10; }
+                            else if(fields.dataX-10>=0) { fields.dataX-=10; };
+                        }
+                        else if (axis=="y") {
+                            if (flag=="add") { fields.dataY=parseInt(fields.dataY)+10; }
+                            else if(fields.dataY-10>=0) { fields.dataY-=10; };
+                        }
+                        else if (axis=="z") {
+                            if (flag=="add") { fields.dataZ=parseInt(fields.dataZ)+10; }
+                            else if(fields.dataZ-10>=0) { fields.dataZ-=10; };
+                        };
+                    //};
+                    $scope.syncDataWithFixed(heroEditor.fixSliderJson($scope.sliderDataOrigin));//同步
+                    setTimeout(function(){
+                        heroEditor.revise();
+                    },100);
+                };
+            }]);
+            angular.element(document).ready(function(){
+                impress().init();
+            });
+            </script>
+        {% endif %}
+    </head>
+    <body class="impress-not-supported" ng-app="updateSliderApp" ng-controller="updateSliderController" >
+        <div class="sliderTags" style="pointer-events: auto !important; text-shadow: 0 0 5px rgb(197,222,234), 0 0 5px rgb(197,222,234), 0 0 5px rgb(197,222,234); text-align: center; display: block;">
+        <a class="mainPage" href="{%url indexPage%}">首页</a>
+            {%if slider.tags.all%}{%for tag in slider.tags.all%}<a class="tag" href="{%url sliders_by_tag tag.tag_name%}" target="_blank">#{{tag.tag_name}}</a>{%endfor%}{%endif%}
+        </div>
+        <div class="fallback-message">
+            <p>您使用的浏览器版本太过老旧不支持本网页所需的特性。</p>
+            <p>
+            更好的上网体验请升级浏览器到最新的
+            <b><a href="https://www.google.com/intl/zh-CN/chrome/browser/?hl=zh-CN&brand=CHMI" target="_blank">Chrome</a></b>、
+            <b><a href="http://www.apple.com.cn/safari/" target="_blank">Safari</a></b>
+            或 <b><a href="http://firefox.com.cn/" target="_blank">Firefox</a></b> 浏览器。
+            </p>
+        </div>
+        <div id="impress"
+            data-ng-init="loaded()">
+            <div ng-repeat="sliderPage in sliderData"
+                ng-bind-html="sliderPage.fields.context|unsafe"
+                id="{+sliderPage.pk +}"
+                class="{+sliderPage.fields.slider_class+} slide "
+                data-x="{+sliderPage.fields.dataX+}"
+                data-y="{+sliderPage.fields.dataY+}"
+                data-z="{+sliderPage.fields.dataZ+}"
+                data-rotate-x="{+sliderPage.fields.data_rotate_x+}"
+                data-rotate-y="{+sliderPage.fields.data_rotate_y+}"
+                data-rotate="{+sliderPage.fields.data_rotate+}"
+                data-scale="{+sliderPage.fields.data_scale+}" ><!--ng-click='clickPage($index)'-->
+            </div>
+        </div>
+        <script src="/static/slider/public.js"></script>
+        <div class="hint">
+            <p>使用空格或方向键控制幻灯片播放</p>
+        </div>
+        <div id="heroEditor" style="position: absolute; bottom: 0; left: 0; width: 100%; text-align: center;pointer-events: auto;">
+            屏幕：
+            <input type='button' value="向右" ng-click='caculTranslate3d("x","add")'/>
+            <input type='button' value="向左" ng-click='caculTranslate3d("x","cut")'/>
+            <input type='button' value="向下" ng-click='caculTranslate3d("y","add")'/>
+            <input type='button' value="向上" ng-click='caculTranslate3d("y","cut")'/>
+            <input type='button' value="向前" ng-click='caculTranslate3d("z","add")'/>
+            <input type='button' value="向后" ng-click='caculTranslate3d("z","cut")'/>
+            旋转：
+            <input type='button' value="左转" ng-click='rotate("y","cut")'/>
+            <input type='button' value="右转" ng-click='rotate("y","add")'/>
+            <input type='button' value="前转" ng-click='rotate("x","cut")'/>
+            <input type='button' value="后转" ng-click='rotate("x","add")'/>
+            <input type='button' value="顺转" ng-click='rotate("z","add")'/>
+            <input type='button' value="逆转" ng-click='rotate("z","cut")'/><!--
+            视角：
+            <input type='button' value="向左" ng-click='moveEye("x","add")'/>
+            <input type='button' value="向右" ng-click='moveEye("x","cut")'/>
+            <input type='button' value="向上" ng-click='moveEye("y","cut")'/>
+            <input type='button' value="向下" ng-click='moveEye("y","add")'/>-->
+            <br />
+            <input id="superHero" type="input" ng-keydown="applying($event)" style="width:800px">
+        </div>
+        <script>
+        if ("ontouchstart" in document.documentElement)
+        {
+            document.querySelector(".hint").innerHTML = "<p>轻触左右边侧控制幻灯片播放</p>";
+        }
+        </script>
+        <script src="/static/base/js/impress_update.js"></script>
+        <div id="temp" style="height:0px;width:0px;overflow:hidden"></div>
+    </body>
+</html>

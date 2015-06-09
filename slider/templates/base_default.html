@@ -1,0 +1,142 @@
+﻿{% extends "base.html" %}
+{% block meta %}
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta property="wb:webmaster" content="15922b54c5e2912c" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% endblock %}
+{% block title %}深刻网络{% endblock %}
+{% block script %}
+    <script src="/static/jquery-1.8.1.min.js"></script>
+<!-- Bootstrap -->
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" />
+<!-- tagcloud -->
+<script src="/static/plugins/TagCloud/jqTagCloud.js"></script>
+<script>
+    $(function ()
+    {
+        $("#tagCloud").jqTagCloud();
+    })
+</script>
+<style>
+    body { text-shadow: 0 0 5px #fff, 0 0 5px #fff, 0 0 5px #fff; }
+    .lineEllipsis { display: inline; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+    .highlight { text-overflow: clip !important; overflow: visible; background-color: white; }
+    .dl-horizontal { border-left: 1px solid #aaa; }
+        .dl-horizontal dt { width: 100px; line-height: 26px; color: #9da9b4; font-size: 14px; text-indent: 11px; font-weight: 100; text-align: left; margin-left: 0px !important; }
+            .dl-horizontal dt a:nth-of-type(even) { margin-right: 10px; color: #2d374b; }
+        .dl-horizontal dd { margin-left: 100px; line-height: 26px; color: #aaa; font-size: 10px; text-indent: 11px; margin-left: 0px !important; }
+            .dl-horizontal dd a { margin-right: 10px; color: #aaa; }
+    /*.dl-horizontal dd:nth-of-type(even) { margin-left: 100px; line-height: 20px; color: #888; font-size: 12px; text-indent: 10px; }
+                .dl-horizontal dd:nth-of-type(even) a { margin-right: 10px; color: #888; }*/
+    #tagCloud { padding-top: 5px; }
+        #tagCloud a { padding-left: 5px; }
+</style>
+{% endblock %}
+{% block header %}
+    {%include 'Script_navbar_fixed_top.html'%}
+{% endblock %}
+{% block content %}
+    <div class="container" style="margin-top: 20px; border: 1px solid #f2f2f2; border-radius: 3px;">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div id="tagCloud" class="span2">
+                    {{tagCloud|safe}}
+                </div>
+                <div class="span10">
+                    <div class="row-fluid">
+                        <div class="span8">
+                            <!--Body content-->
+                            <link href="/static/plugins/AviaSlider/style.css" rel="stylesheet" />
+                            <link href="/static/plugins/AviaSlider/prettyPhoto.css" rel="stylesheet" />
+                            <script src="/static/plugins/AviaSlider/jquery.aviaSlider.min.js"></script>
+                            <script src="/static/plugins/AviaSlider/custom.min.js"></script>
+                            <script src="/static/plugins/AviaSlider/jquery.prettyPhoto.js"></script>
+                            <div class="center">
+                                {{recommendeds|safe}}
+                            </div>
+                        </div>
+                        <div class="span4 ad">
+                            <!--Sidebar content-->
+                            <a href="javascript:void(0)">广告</a>
+                        </div>
+                    </div>
+                    <div class="row-fluid">
+                        <div class="span6">
+                            <div>headlines:</div>
+                            {{headlines|safe}}
+                        </div>
+                        <div class="span6">
+                            <div>topics:</div>
+                            <dl class="dl-horizontal">
+                                <dt><a href="#">@李振</a></dt>
+                                <dd><a href="#">响应式工具测试案例响应式工具测试案例</a></dd>
+                                <dd><a>#bootstrap</a><a>#设计</a><a>#响应式</a><a>#web</a></dd>
+                                <dt><a href="#">@李振</a></dt>
+                                <dd><a href="#">响应式工具测试案例响应式工具测试案例</a></dd>
+                                <dd><a>#bootstrap</a><a>#设计</a><a>#响应式</a><a>#web</a></dd>
+                                <dt><a href="#">@李振</a></dt>
+                                <dd><a href="#">响应式工具测试案例响应式工具测试案例</a></dd>
+                                <dd><a>#bootstrap</a><a>#设计</a><a>#响应式</a><a>#web</a></dd>
+                                <dt><a href="#">@李振</a></dt>
+                                <dd><a href="#">响应式工具测试案例响应式工具测试案例</a></dd>
+                                <dd><a>#bootstrap</a><a>#设计</a><a>#响应式</a><a>#web</a></dd>
+                                <dt><a href="#">@李振</a></dt>
+                                <dd><a href="#">响应式工具测试案例响应式工具测试案例</a></dd>
+                                <dd><a>#bootstrap</a><a>#设计</a><a>#响应式</a><a>#web</a></dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span2 ad">广告</div>
+                <div class="span5">
+                    <div>关注的人:</div>
+                    <dl class="dl-horizontal">
+                        <dt><a href="#">@李振</a></dt>
+                        <dd><a href="#">响应式工具测试案例响应式工具测试案例</a></dd>
+                        <dd><a>#bootstrap</a><a>#设计</a><a>#响应式</a><a>#web</a></dd>
+                        <dt><a href="#">@李振</a></dt>
+                        <dd><a href="#">响应式工具测试案例响应式工具测试案例</a></dd>
+                        <dd><a>#bootstrap</a><a>#设计</a><a>#响应式</a><a>#web</a></dd>
+                        <dt><a href="#">@李振</a></dt>
+                        <dd><a href="#">响应式工具测试案例响应式工具测试案例</a></dd>
+                        <dd><a>#bootstrap</a><a>#设计</a><a>#响应式</a><a>#web</a></dd>
+                        <dt><a href="#">@李振</a></dt>
+                        <dd><a href="#">响应式工具测试案例响应式工具测试案例</a></dd>
+                        <dd><a>#bootstrap</a><a>#设计</a><a>#响应式</a><a>#web</a></dd>
+                        <dt><a href="#">@李振</a></dt>
+                        <dd><a href="#">响应式工具测试案例响应式工具测试案例</a></dd>
+                        <dd><a>#bootstrap</a><a>#设计</a><a>#响应式</a><a>#web</a></dd>
+                    </dl>
+                </div>
+                <div class="span5">
+                    <div>关注的标签:</div>
+                    <dl class="dl-horizontal">
+                        <dt><a href="#">@李振</a></dt>
+                        <dd><a href="#">响应式工具测试案例响应式工具测试案例</a></dd>
+                        <dd><a>#bootstrap</a><a>#设计</a><a>#响应式</a><a>#web</a></dd>
+                        <dt><a href="#">@李振</a></dt>
+                        <dd><a href="#">响应式工具测试案例响应式工具测试案例</a></dd>
+                        <dd><a>#bootstrap</a><a>#设计</a><a>#响应式</a><a>#web</a></dd>
+                        <dt><a href="#">@李振</a></dt>
+                        <dd><a href="#">响应式工具测试案例响应式工具测试案例</a></dd>
+                        <dd><a>#bootstrap</a><a>#设计</a><a>#响应式</a><a>#web</a></dd>
+                        <dt><a href="#">@李振</a></dt>
+                        <dd><a href="#">响应式工具测试案例响应式工具测试案例</a></dd>
+                        <dd><a>#bootstrap</a><a>#设计</a><a>#响应式</a><a>#web</a></dd>
+                        <dt><a href="#">@李振</a></dt>
+                        <dd><a href="#">响应式工具测试案例响应式工具测试案例</a></dd>
+                        <dd><a>#bootstrap</a><a>#设计</a><a>#响应式</a><a>#web</a></dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block footer %}
+{% endblock %}

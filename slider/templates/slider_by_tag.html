@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <script src="/static/jquery-1.8.1.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" />
+    <!-- tagcloud -->
+    <script src="/static/plugins/TagCloud/jqTagCloud.js"></script>
+    <style>
+        .slidertitle { font-size: 18px; }
+        .titleTag { font-size: 26px; }
+        .tag { margin-right: 10px; color: #aaa; font-size: 12px; text-indent: 11px; line-height: 26px; }
+        .status { font-size: 12px; }
+        .username { font-size: 12px; color: #aaf; font-weight: bold; padding-top: 10px; }
+        /*.pagination .active a { border: 1px solid #0088cc !important; }*/
+        .thumbTitle { height: 50px; width: 50px; border-radius: 3px; -moz-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); -webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); filter: progid:DXImageTransform.Microsoft.Shadow(direction=135,strength=3, color=#808080); border-collapse: separate; }
+    </style>
+    {%include "Script_like_collect_slider.html"%}
+</head>
+<body>
+    {%include 'Script_navbar_fixed_top.html'%}
+    <div class="container" style="margin-top: 23px; border: 1px solid #f2f2f2; border-radius: 3px;">
+        <ul class="breadcrumb">
+            <li class="active">{% ifnotequal extra.slideCount 0 %}
+                <span class="span4">共有<span style="color: red">{{ extra.slideCount }}</span>个幻灯片打上了<a href="#" class="titleTag" id="mainTag">#{{extra.tagname}}</a>标签
+                </span>
+                <span class="span2">
+                    <a href="{%url usersFavoriteTag extra.tagname%}" target="_blank" style="color: blue"><span id="favoriteCount" style="font-weight: bold">{{extra.favoriteCount}}</span>人正在关注</a>
+                </span><span class="span2"><span>
+                    <button class="btn btn-small btn-success btn_favoriteTag" type="button" tagname="{{extra.tagname}}" style="{% ifequal extra.isFavorite 'yes'%}display: none{% endifequal %}">添加关注</button>
+                    <button class="btn btn-small btn-warning btn_unfavoriteTag" type="button" tagname="{{extra.tagname}}" style="{% ifnotequal extra.isFavorite 'yes'%}display: none{% endifnotequal %}">取消关注</button>
+                </span>{%include "Script_intersting_tag.html"%}</span>
+                {% else %}
+                无此标签：(
+        {% endifnotequal %}
+            </li>
+        </ul>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span2">
+                    您可能对以下标签感兴趣（计算收藏相似用户的标签）
+                </div>
+                <div class="span7">
+                    {% if theslider %}
+                    {% for slider in theslider %}
+                    <div class="row-fluid">
+                        <div class="span2 text-center">
+                            <div class="pull-center">
+                                <a href="{% url siteuser_account_url slider.author.userURL %}" target="_blank">
+                                    <img src="{{ slider.author.avatar }}" class="thumbTitle" /></a>
+                            </div>
+                            <div class="pull-center username"><a href="{% url siteuser_account_url slider.author.userURL %}" target="_blank">{{ slider.author.username }}</a></div>
+                        </div>
+                        <div class="span10">
+                            <div class="span12" style="padding-bottom: 30px">
+                                <a href="{%url slider_url userURL=slider.author.userURL,sliderURL=slider.fixedSliderURL%}" class="slidertitle">{{ slider.title }}</a>
+                                <!--{% ifnotequal slider.headline_date None%}<span class="span1">[头条]</span>{%endifnotequal%}
+            {% ifnotequal slider.recommended_date None%}<span class="span1">[推荐]</span>{%endifnotequal%}-->
+                                <br />
+                                {% for tag in slider.tags.all %}
+                                {% ifnotequal tag.tag_name extra.tagname %}
+                                <a href="{%url sliders_by_tag tag.tag_name%}" class="tag">#{{ tag.tag_name }}</a>
+                                {% endifnotequal %}
+                                {% endfor %}
+                            </div>
+                            <div class="row-fluid muted credit text-right status" style="margin-bottom: -20px;">
+                                <span class="span3 pull-right">{{slider.creation_date|date:'Y-m-d H:i'}}</span>
+                                <span class="span2 pull-right">{{slider.visitors.count}}人阅读</span>
+                                <span class="span4 pull-right">
+                                    <a class="btn_collection {%ifnotequal slider.amICollectIt 0 %} collected{%endifnotequal%} muted" href="javascript:void(0)" for="{{slider.slider_ID}}">收藏(<span>{{slider.collections}}</span>)</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a class="btn_like {%ifnotequal slider.amILikeIt 0%} liked{%endifnotequal%} muted" href="javascript:void(0)" for="{{slider.slider_ID}}">喜欢(<span>{{slider.likes}}</span>)</a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    {% endfor %}
+                    {% else %}
+                        没有找到数据
+                    {% endif %}
+                    {%if extra.pageCount > 1 %}
+                    <div class="pagination pagination-large pagination-centered">
+                        <ul>
+                            <li><a href="{% url sliders_by_tag extra.tagname %}">«</a></li>
+                            {% for i in extra.loop_times %}
+                            <li class="{% ifequal extra.page i %} active {% endifequal %} "><a href="{% ifnotequal extra.page i %}{%url sliders_by_tag_page tagname=extra.tagname,page=i%}{%else%}javascript:void(0){% endifnotequal %}">{{i}}</a></li>
+                            {{endif}}
+                            {% endfor %}
+                            <li><a href="{%url sliders_by_tag_page tagname=extra.tagname,page=extra.pageCount%}">»</a></li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="span3">
+                    <!--Body content-->
+                    广告
+                    <br />
+                    本标签下阅读最多/排行
+                    <br />
+                    广告
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

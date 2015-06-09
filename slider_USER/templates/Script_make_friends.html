@@ -1,0 +1,123 @@
+﻿<!--处理关注粉丝和粉丝关注关系的代码和样式start-->
+<script src="{{ STATIC_URL }}bootstrap/js/bootstrap-modal.js"></script>
+<div class="modal hide fade" id="modalWindow" style="">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>提示</h3>
+    </div>
+    <div class="modal-body">
+        <div class="alert alert-success" style="display: none" id="focussuccess">
+            恭喜，您已经成功关注{{siteuser.username}}
+        </div>
+        <div class="alert alert-error" style="display: none" id="notinnerusercannotbefocused">
+            关注失败，请确定您的账户不是使用第三方网站登录，继续关注请<a href="{% url siteuser_register %}">注册账户</a>或<a href="{% url siteuser_as_register %}">转为本站用户</a>后登录。
+        </div>
+        <div class="alert alert-info" style="display: none" id="focusfailed">
+            关注失败，请联系我们。
+        </div>
+        <div class="alert" style="display: none" id="notfocusself">
+            你好自恋哦亲，不允许关注自己的。
+        </div>
+        <div class="alert" style="display: none" id="focused">
+            您已经关注了此用户。
+        </div>
+        <div class="alert alert-error" style="display: none" id="notinnerusercannotbeunfocused">
+            纳尼？请确定您的账户不是使用第三方网站登录，你怎么关注了{{siteuser.username}}的？您可以<a href="{% url siteuser_register %}">注册账户</a>或<a href="{% url siteuser_as_register %}">转为本站用户</a>。
+        </div>
+        <div class="alert" style="display: none" id="nofocused">
+            你又调皮！根本没有关注过此用户，下次要乖乖哦。
+        </div>
+        <div class="alert alert-success" style="display: none" id="successunfocus">
+            已经成功取消关注{{siteuser.username}}。
+        </div>
+        <div class="alert alert-info" style="display: none" id="failedunfocus">
+            取消关注失败，请联系我们。
+        </div>
+        <div class="alert alert-error" style="display: none" id="notLogin">
+            已有账号请<a href="{% url siteuser_login %}">登录</a>，没有账号的话请<a href="{% url siteuser_register %}">注册账户</a>或<a href="{% url siteuser_as_register %}">转为本站用户</a>再关注。
+        </div>
+        <div class="alert alert-info" style="display: none" id="nofocusonyou">
+            TA没有关注过你哦
+        </div>
+        <div class="alert alert-info" style="display: none" id="removeError">
+            移除关注时发生错误
+        </div>
+        <div class="alert alert-info" style="display: none" id="successremove">
+            成功移除对我的关注
+        </div>
+        <div class="alert alert-info" style="display: none" id="failedremove">
+            移除对我的关注失败，请联系我们。
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">关闭</a>
+    </div>
+</div>
+<script src="/static/slider/public.js"></script>
+<script>
+    $(function ()
+    {
+        function tipson($that, info)
+        {
+            $(".alert:not(#" + info + ")").hide(function ()
+            {
+                $("#" + info).show(300);
+            })
+            if (info == "focussuccess")
+            {
+                $that.hide();
+                $that.next(".makemeasnotfriends").show();
+            } else if (info == "successunfocus")
+            {
+                $that.prev(".makemeasfriends").show();
+                $that.hide();
+            } else if (info == "successremove")
+            {
+                $that.hide();
+                $that.next(".successremoveinfo").show();
+            }
+            $("#modalWindow").modal()
+        }
+        $(".makemeasfriends").click(function ()
+        {
+            var $that = $(this);
+            var aria = $that.attr("aria");
+            $.post('/focusperson/', {
+                date: new Date()
+                , 'csrfmiddlewaretoken': getCookie('csrftoken')
+                , uid: aria
+            }, function (data)
+            {
+                tipson($that, data);
+            })
+        });
+        $(".makemeasnotfriends").click(function ()
+        {
+            var $that = $(this);
+            var aria = $that.attr("aria");
+            $.post('/unfocusperson/', {
+                date: new Date()
+                , 'csrfmiddlewaretoken': getCookie('csrftoken')
+                , uid: aria
+            }, function (data)
+            {
+                tipson($that, data);
+            })
+        });
+        $(".removemefromfriends").click(function ()
+        {
+            var $that = $(this);
+            var aria = $that.attr("aria");
+            $.post('/removemyfocusfromperson/', {
+                date: new Date()
+                , 'csrfmiddlewaretoken': getCookie('csrftoken')
+                , uid: aria
+            }, function (data)
+            {
+                tipson($that, data);
+            })
+        });
+    })
+</script>
+<!--处理关注粉丝和粉丝关注关系的代码和样式end-->

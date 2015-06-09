@@ -1,0 +1,103 @@
+﻿<!--处理喜欢和收藏逻辑的代码和样式start-->
+<style>
+    .btn_like {background-image: url(/static/images/icon_love.png); background-repeat: no-repeat; padding-left: 20px; }
+    .liked { background-position: 0 -19px; }
+    .btn_collection {background-image: url(/static/images/icon_collection.png); background-repeat: no-repeat; padding-left: 20px; }
+    .collected { background-position: 0 -19px; }
+    .isRequesting { background-image: url(/static/images/ajax_requesting.gif)!important; background-position: 0 0px !important; }
+</style>
+<script src="/static/slider/public.js"></script>
+<script>
+    $(function ()
+    {
+        $(".btn_like").click(function ()
+        {
+            var $that = $(this);
+
+            if ($that.hasClass("isRequesting"))
+            {//根据类名标记判断是否可以继续，以屏蔽频繁请求
+                return false;
+            }
+            $that.addClass("isRequesting");//开始请求，标记上类名
+
+            urlcallback = "/likeAslider/";
+            if ($that.hasClass("liked"))
+            {
+                urlcallback = "/unlikeAslider/";
+            }
+            $.post(urlcallback, {
+                date: new Date()
+                , 'csrfmiddlewaretoken': getCookie('csrftoken')
+                , sliderid: $that.attr("for")
+            }, function (data)
+            {
+                if (data == "success")
+                {
+                    $that.toggleClass("liked")
+                    if ($that.hasClass("liked"))
+                    {
+                        $that.find("span").html(parseInt($that.find("span").html()) + 1);
+                    } else
+                    {
+                        $that.find("span").html(parseInt($that.find("span").html()) - 1);
+                    }
+                }
+                else if (data == "error")
+                {
+                    alert("发生错误，请确保您已经登陆");
+                }
+                else
+                {
+                    alert("失败");
+                }
+                $that.removeClass("isRequesting");//请求完毕，删除类名
+            });
+        });
+        $(".btn_collection").click(function ()
+        {
+            var $that = $(this);
+
+            if ($that.hasClass("isRequesting"))
+            {//根据类名标记判断是否可以继续，以屏蔽频繁请求
+                alert("正在处理请求，请稍候");
+                return false;
+            }
+            $that.addClass("isRequesting");//开始请求，标记上类名
+
+            urlcallback = "/collectAslider/";
+            if ($that.hasClass("collected"))
+            {
+                urlcallback = "/uncollectAslider/";
+            }
+            $.post(urlcallback, {
+                date: new Date()
+                , 'csrfmiddlewaretoken': getCookie('csrftoken')
+                , sliderid: $that.attr("for")
+            }, function (data)
+            {
+                if (data == "success")
+                {
+                    $that.toggleClass("collected")
+                    if ($that.hasClass("collected"))
+                    {
+                        $that.find("span").html(parseInt($that.find("span").html()) + 1);
+                    } else
+                    {
+                        $that.find("span").html(parseInt($that.find("span").html()) - 1);
+                    }
+                }
+                else if (data == "error")
+                {
+                    alert("发生错误，请确保您已经登陆网站");
+                }
+                else
+                {
+                    alert("失败");
+                }
+
+                $that.removeClass("isRequesting");//请求完毕，删除类名
+            });
+        });
+    });
+</script>
+<!--处理喜欢和收藏逻辑的代码和样式end-->

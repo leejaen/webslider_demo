@@ -1,0 +1,58 @@
+﻿{% extends "account_base.html" %}
+{% block title %}所有动态{% endblock %}
+{% block pagecontainer %}
+<style>    .breadcrumb li {
+    margin-left:10px;}
+    .breadcrumb {
+    margin-top:20px;}
+</style>
+<ul class="breadcrumb">
+    <li>
+        <a href="{%url indexPage%}">首页</a><span class="divider">|</span></li>
+    {% if not extraInfo.isSelf %}<!--其他用户的账户-->
+    {% ifnotequal siteuser.is_social 1 %}<!--非社交网络用户-->
+    {% include 'Script_make_friends.html' %}
+    <li class="active">
+        <span>
+            <a href="#" class="makemeasfriends" aria="{{siteuser.id}}" style="{% ifequal extraInfo.isfocused 'yes' %}display: none{%endifequal%}">关注TA</a>
+            <a href="#" class="makemeasnotfriends" aria="{{siteuser.id}}" style="{% ifequal extraInfo.isfocused 'no' %}display: none{%endifequal%}">我已关注，取消关注</a>
+        </span>
+        <span class="divider">|</span>
+    </li>
+    {%else%}
+    <li class="active">主页：
+    {% ifequal socialUser.site_name 'douban' %}
+        <a href="http://www.douban.com/people/{{socialUser.site_uid}}/" target="_blank">{{siteuser.username}}</a>
+        {%else%}
+    {% ifequal socialUser.site_name 'weibo' %}
+        <a href="http://www.weibo.com/{{socialUser.site_uid}}/" target="_blank">{{siteuser.username}}</a>
+        {%else%}
+    {% ifequal socialUser.site_name 'renren' %}
+        <a href="http://www.renren.com/{{socialUser.site_uid}}/" target="_blank">{{siteuser.username}}</a>
+        {%else%}
+    {% ifequal socialUser.site_name 'QQ' %}
+        <a href="http://www.qq.com/{{socialUser.site_uid}}/" target="_blank">{{siteuser.username}}</a>
+        {%endifequal%}
+    {%endifequal%}
+    {%endifequal%}
+    {%endifequal%}
+        <span style="font-size: 12px; color: #aaa">（非站内用户，无法关注）</span>
+        <span class="divider">|</span>
+    </li>
+    {% endifnotequal %}
+    {%else%}    
+    <li class="pull-right"><a href="{% url siteuser_logout %}">退出</a></li>
+{% endif %}
+    {%if extraInfo.islogin%}<!--已经登录-->{%if extraInfo.isSelf%}<!--且是自己-->
+<li class="pull-right"><a href="{% url siteuser_changepw %}" target="_blank">修改密码</a></li>    {% endif %}{% endif %}
+</ul>
+<div class="span12" style="margin-left: 0px">
+    {%if extraInfo.islogin%}<!--已经登录-->{%if not extraInfo.isSelf%}<!--且不是自己-->
+    {%include "Script_message_to.html"%}
+    <div class="span12" style="margin-left: 0px">
+        <textarea style="width: 100%; max-height: 200px; max-width: 100%"></textarea>
+        <input class="btn btn-small btn-success pull-right btn_SendMsg" type="button" value="发送私信" aria="{{siteuser.id}}" areamsg="0"/>
+    </div>
+    {% endif %}{% endif %}
+</div>
+{% endblock %}

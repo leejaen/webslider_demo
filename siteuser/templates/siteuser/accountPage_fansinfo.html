@@ -1,0 +1,106 @@
+﻿{% extends "account_base.html" %}
+{% block title %}所有粉丝
+{% endblock %}
+{% block pagecontainer %}
+{%if fans%}
+<style>
+    .bigTag { font-size: 20px; }
+    .hoverInfo { border-bottom: 1px solid #00a !important; }
+</style>
+<script>
+    $(function ()
+    {
+        $(".info").hover(function ()
+        {
+            $(this).addClass("hoverInfo");
+        }, function ()
+        {
+            $(this).removeClass("hoverInfo");
+        });
+    });
+</script>
+<div class="row-fluid">
+    <div class="span12">
+        {% ifequal extraInfo.navgationTag 'myfocus'%}共关注了{{extraInfo.fansCount}}人{%else%}共有{{extraInfo.fansCount}}个粉丝关注{%if extraInfo.isSelf%}我{%else%}{{siteuser.username}}{%endif%}{%endifequal%}：
+    </div>
+    {% include 'Script_make_friends.html' %}
+    {%for fan in fans%}
+    <div class="span3" style="border-bottom: 1px solid #aaa; margin: 5px; padding: 5px">
+        <div class="row-fluid">
+            <div class="span4">
+                <p>
+                    <img src="{{fan.avatar}}" style="width: 50px; height: 50px" class="thumbTitle"/>
+                </p>
+                {%ifequal fan.iseachother 2%}
+                <p>
+                    {%if extraInfo.islogin%}
+                    {%ifnotequal extraInfo.myuserid fan.id%}互相关注{%endifnotequal%}
+                    {%endif%}
+                </p>
+                {%endifequal%}
+            </div>
+            <div class="span8" class="Info">
+                <p>
+                    <a href="{%url siteuser_account_url fan.userURL%}" class="bigTag">@{{fan.username}}
+                    {%ifequal extraInfo.myuserid fan.id%}(我){%endifequal%}</a>
+                </p>
+                <p>
+                    <span class="">{{fan.fansCount}}个粉丝</span>，
+                    <span class="">关注{{fan.focusCount}}人</span>
+                </p>
+                <p>
+                    {%if extraInfo.islogin%}<!--浏览者已经登录-->
+                        {%if extraInfo.isSelf%}<!--浏览者查看的自己的页面-->
+                            {%ifnotequal extraInfo.myuserid fan.id%}<!--浏览者查看的用户的关注人或关注的人列表中不是自己-->
+                                {% ifequal fan.isfocused 0 %}<!--a没有关注，显示关注-->
+                                    <a href="#" class="makemeasfriends" aria="{{fan.id}}" style="">添加关注</a>
+                                    <a href="#" class="makemeasnotfriends" aria="{{fan.id}}" style="display: none">我已关注，取消关注</a>
+                                {% else %}<!--a已经关注，显示取消关注-->
+                                    <a href="#" class="makemeasfriends" aria="{{fan.id}}" style="display: none">添加关注</a>
+                                    <a href="#" class="makemeasnotfriends" aria="{{fan.id}}" style="">我已关注，取消关注</a>
+                                {%endifequal%}
+                            {%else%}<!--是自己-->
+                                <a href="#" class="removemefromfriends" aria="{{siteuser.id}}">移除关注</a>
+                                <span class="successremoveinfo" style="color:green;display:none">已经移除</span>
+                            {%endifnotequal%}
+                        {%else%}<!--浏览者查看的别人的页面-->
+                            {%ifnotequal extraInfo.myuserid fan.id%}<!--浏览者查看的用户的关注人或关注的人列表中不是自己-->
+                                {% ifequal fan.isfocused 0 %}<!--b没有关注，显示关注-->
+                                    <a href="#" class="makemeasfriends" aria="{{fan.id}}" style="">添加关注</a>
+                                    <a href="#" class="makemeasnotfriends" aria="{{fan.id}}" style="display: none">我已关注，取消关注</a>
+                                {% else %}<!--b已经关注，显示取消关注-->
+                                    <a href="#" class="makemeasfriends" aria="{{fan.id}}" style="display: none">添加关注</a>
+                                    <a href="#" class="makemeasnotfriends" aria="{{fan.id}}" style="">我已关注，取消关注</a>
+                                {%endifequal%}
+                            {%else%}<!--是自己-->
+                                <a href="#" class="removemefromfriends" aria="{{siteuser.id}}">移除关注</a>
+                                <span class="successremoveinfo" style="color:green;display:none">已经移除</span>
+                            {%endifnotequal%}
+                        {%endif%}
+                    {%else%}<!--游客浏览-->
+                        <a href="#" class="makemeasfriends" aria="{{fan.id}}">关注</a>
+                    {%endif%}
+                </p>
+            </div>
+        </div>
+    </div>
+    {%endfor%}
+</div>
+
+{%if extraInfo.pageCount > 1 %}
+<div class="pagination pagination-large pagination-centered">
+    <ul>
+        <li><a href="{% url my_fans siteuser.userURL%}">«</a></li>
+        {% for i in extraInfo.loop_times %}
+        <li class="{% ifequal extraInfo.page i %} active {% endifequal %} "><a href="{% ifnotequal extraInfo.navgationTag 'myfocus'%}{%url my_fans_with_page userurlname=siteuser.userURL,page=extraInfo.pageCount%}{%else%}{%url my_focus_with_page userurlname=siteuser.userURL,page=extraInfo.pageCount%}{%endifnotequal%}">{{i}}</a></li>
+        {{endif}}
+        {% endfor %}
+        <li><a href="{% ifnotequal extraInfo.navgationTag 'myfocus'%}{%url my_fans_with_page userurlname=siteuser.userURL,page=extraInfo.pageCount%}{%else%}{%url my_focus_with_page userurlname=siteuser.userURL,page=extraInfo.pageCount%}{%endifnotequal%}">»</a></li>
+    </ul>
+</div>
+{% endif %}
+
+{%else%}
+{%if socialUser%}第三方网站用户尚无法关注标签，您可以<a href="#">立即推荐此用户注册或转为网站用户</a>{%else%}{% ifequal extraInfo.navgationTag 'myfocus'%}没有关注任何人{%else%}还没有粉丝关注{%endifequal%}{%endif%}
+{%endif%}
+{% endblock %}

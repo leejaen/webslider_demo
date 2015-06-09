@@ -1,0 +1,41 @@
+﻿<!--回复消息start-->
+<script>
+    $(function ()
+    {
+        $(".btn_SendMsg").click(function ()
+        {
+            var $textarea = $(this).prev("textarea");
+            var msgtxt = $textarea.val();
+            if (msgtxt.length > 5)
+            {
+                $.post("/sendprivatemsg/", {
+                    date: new Date()
+                    , 'csrfmiddlewaretoken': getCookie('csrftoken')
+                    , message: msgtxt
+                    , aria: $(this).attr("aria")//回复给的用户
+                    , areamsg: $(this).attr("areamsg")//回复给的消息
+                }, function (data)
+                {
+                    if (data == "successsent")
+                    {
+                        $textarea.val("");
+                        alert("发送成功");
+                    }
+                    else if (data == "dataerror")
+                    {
+                        alert("您回复的信息或回复的用户发生错误");
+                    }
+                    else
+                    {
+                        alert("发送失败");
+                    }
+                });
+            }
+            else
+            {
+                alert("你发的消息太短了");
+            }
+        });
+    })
+</script>
+<!--回复消息end-->

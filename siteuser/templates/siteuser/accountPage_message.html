@@ -1,0 +1,123 @@
+﻿{% extends "account_base.html" %}
+{% block title %}消息{% endblock %}
+{% block pagecontainer %}
+<!--<script type="text/javascript" src="http://www.see-source.com/bootstrap/js/bootstrap-tooltip.js"></script>-->
+<script src="/static/bootstrap/js/bootstrap-tooltip.js"></script>
+<!--<script type="text/javascript" src="http://www.see-source.com/bootstrap/js/bootstrap-popover.js"></script>-->
+<script src="/static/bootstrap/js/bootstrap-popover.js"></script>
+<div>
+    <div class="span12 btn-group text-center" id="messageNav" data-toggle="buttons-radio">
+        <!--别人给我的私信-->
+        <a class="btn active" href="javascript:void(0)">我的私信{%ifnotequal extraInfo.noReadPrivate 0%}({{extraInfo.noReadPrivate}}){%endifnotequal%}</a>
+        <!--@我的地方-->
+        <a class="btn" href="{%url siteuser_private_atme%}">@我的{%ifnotequal extraInfo.noReadAtMe 0%}({{extraInfo.noReadAtMe}}){%endifnotequal%}</a>
+        <!--我评论给别人的-->
+        <a class="btn" href="{%url siteuser_private_replyme%}">我的内容评论{%ifnotequal extraInfo.noReadReplyMe 0%}({{extraInfo.noReadReplyMe}}){%endifnotequal%}</a>
+        <!--别人评论给我的-->
+        <a class="btn" href="{%url siteuser_private_myreply%}">我的评论{%ifnotequal extraInfo.noReadGetReply 0%}({{extraInfo.noReadGetReply}}){%endifnotequal%}</a>
+    </div>
+    <div class="span12" id="blockMessage">  
+        <div id="privateMessage">
+            {%if Private%}
+            {%include "Script_message_to.html"%}
+            <script>
+                $(function () {
+                    function alignBottomReplayBox(elid) {
+                        var $elid = $("#" + elid);
+                        var elTop = $elid.offset().top;
+                        $("body").animate({ "scrollTop": elTop }, 300);
+                    }; $(".toReplay").click(function () {
+                        alignBottomReplayBox("message_" + $(this).attr("for"));
+                    });
+                    $(".btn_reply").click(function () {
+                        var showText = $(this).html();
+                        if (showText == "回复消息") {
+                            $(this).html("隐藏回复");
+                            var $replaybox = $("#replaybox_" + $(this).attr("for"));
+                            $replaybox.show();
+                            $replaybox.find("textarea").focus();
+                            alignBottomReplayBox("message_" + $(this).attr("for"));
+                        }
+                        else if (showText == "隐藏回复") {
+                            $(this).html("回复消息");
+                            $("#replaybox_" + $(this).attr("for")).hide();
+                        }
+                    })
+                })
+            </script>
+            {%ifnotequal extraInfo.noReadPrivate 0%}
+            <script>
+                setTimeout(function () {//3秒后置已读
+                    $.post("/setAllMessageToBeReaded/", {
+                        date: new Date()
+                        , 'csrfmiddlewaretoken': getCookie('csrftoken')
+                    }, function (data) {
+                        if (data == "success") {
+                            $(".messagerBox").css({ "font-weight": "100" });
+                        }
+                    })
+                }, 3000);
+            </script>
+            {%endifnotequal%}
+            {%for message in Private%}
+            <div class="span12 messagerBox" style="{%ifnotequal message.FromUser.id siteuser.id%}{%ifequal message.IsRead 0%}font-weight: bold; {%endifequal%}{%endifnotequal%}margin-left: 0px;">
+                <div class="span2 {%ifequal message.FromUser.id siteuser.id%}pull-right{%endifequal%}">
+                    <div class="span12 text-center" style="margin-top: 30px;">
+                        <p>
+                            {%ifequal message.FromUser.id siteuser.id%}
+                                <img src="{{message.FromUser.avatar}}" style="width: 50px; height: 50px" class="thumbTitle" />
+                            {%else%}
+                            <a href="{%url siteuser_account_url message.FromUser.userURL%}">
+                                <img src="{{message.FromUser.avatar}}" style="width: 50px; height: 50px" class="thumbTitle" /></a>
+                            {%endifequal%}
+                        </p>
+                        <p>
+                            {%ifequal message.FromUser.id siteuser.id%}
+                            <span>我</span>
+                            {%else%}
+                            <a href="{%url siteuser_account_url message.FromUser.userURL%}">{{message.FromUser.username}}</a>
+                            {%endifequal%}
+                        </p>
+                    </div>
+                </div>
+                <div class="span8 {%ifequal message.FromUser.id siteuser.id%}pull-right{%endifequal%}" id="message_{{message.id}}" style="margin-left: 0px !important;">
+                    <div class="popover {%ifequal message.FromUser.id siteuser.id%}left{%else%}right{%endifequal%}" style="position: relative; display: block; margin: 10px; max-width: 800px">
+                        <div class="arrow" style="margin-top: 0; top: 40px;"></div>
+                        <div class="popover-title text-center">
+                            {{message.CreationDate|date:'Y-m-d H:i'}}
+                            {%ifnotequal message.FromUser.id siteuser.id%}
+                            <a href="javascript:void(0);" class="pull-right btn_reply" for="{{message.id}}">回复消息</a><!--href="#message_{{message.id}}"-->
+                            {%else%}
+                            <span class="pull-right">To: <a href="javascript:void(0);" title="快速定位到源回复内容" for="{{message.replayToMessageId}}" class="toReplay">{{message.ToUser.username}}</a></span>
+                            {%endifnotequal%}
+                        </div>
+                        <div class="popover-content">
+                            <p>{{message.MessageText|safe}}</p>
+                        </div>
+                        {%ifnotequal message.FromUser.id siteuser.id%}
+                        <div class="span12" id="replaybox_{{message.id}}" style="margin-left: 0px; display: none">
+                            <textarea style="width: 100%; max-height: 200px; max-width: 100%"></textarea>
+                            <input class="btn btn-small btn-success pull-right btn_SendMsg span2" type="button" value="回复消息" aria="{{message.FromUser.id}}" areamsg="{{message.id}}" />
+                        </div>
+                        {%endifnotequal%}
+                    </div>
+                </div>
+            </div>
+            {%endfor%}
+            {%if extraInfo.pageCount > 1 %}
+            <div class="pagination pagination-large pagination-centered">
+                <ul>
+                    <li><a href="{% url siteuser_private_message%}">«</a></li>
+                    {% for i in extraInfo.loop_times %}
+                    <li class="{% ifequal extraInfo.page i %} active {% endifequal %} "><a href="{%url siteuser_private_message_with_page i%}">{{i}}</a></li>
+                    {{endif}}
+                    {% endfor %}
+                    <li><a href="{%url siteuser_private_message_with_page extraInfo.pageCount%}">»</a></li>
+                </ul>
+            </div>
+            {% endif %}
+            {%endif%}
+        </div>
+    </div>
+</div>
+{% endblock %}
